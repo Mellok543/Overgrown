@@ -2,12 +2,22 @@ using UnityEngine;
 
 public class GrassSellPoint : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private EconomyManager economy;
-    [SerializeField] private int pricePerBundle = 2;
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private GrassInventory playerInventory;
+
+    [Header("Interaction")]
+    [SerializeField] private float interactDistance = 2.5f;
     [SerializeField] private KeyCode sellKey = KeyCode.E;
+
+    [Header("Selling")]
+    [SerializeField] private int pricePerBundle = 2;
+
+    [Header("Prototype UI")]
     [SerializeField] private bool showPrototypeUI = true;
 
-    private GrassInventory nearbyInventory;
+    private bool isLookedAt;
 
     private void Awake()
     {
@@ -15,45 +25,66 @@ public class GrassSellPoint : MonoBehaviour
         {
             economy = FindFirstObjectByType<EconomyManager>();
         }
+
+        if (playerInventory == null)
+        {
+            playerInventory = FindFirstObjectByType<GrassInventory>();
+        }
+
+        if (playerCamera == null)
+        {
+            Camera mainCamera = Camera.main;
+
+            if (mainCamera != null)
+            {
+                playerCamera = mainCamera;
+            }
+            else if (playerInventory != null)
+            {
+                playerCamera = playerInventory.GetComponentInChildren<Camera>();
+            }
+        }
     }
 
     private void Update()
     {
-        if (nearbyInventory == null)
-            return;
+        isLookedAt = IsPlayerLookingAtSellPoint();
 
-        if (Input.GetKeyDown(sellKey))
+        if (isLookedAt && Input.GetKeyDown(sellKey))
         {
             SellAll();
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private bool IsPlayerLookingAtSellPoint()
     {
-        GrassInventory inventory = other.GetComponentInParent<GrassInventory>();
+        if (playerCamera == null)
+            return false;
 
-        if (inventory != null)
+        Ray ray = new Ray(
+            playerCamera.transform.position,
+            playerCamera.transform.forward
+        );
+
+        if (!Physics.Raycast(
+                ray,
+                out RaycastHit hit,
+                interactDistance,
+                ~0,
+                QueryTriggerInteraction.Ignore))
         {
-            nearbyInventory = inventory;
+            return false;
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        GrassInventory inventory = other.GetComponentInParent<GrassInventory>();
-
-        if (inventory != null && inventory == nearbyInventory)
-        {
-            nearbyInventory = null;
-        }
+        return hit.collider.GetComponentInParent<GrassSellPoint>() == this;
     }
 
     public void SellAll()
     {
-        if (nearbyInventory == null || economy == null)
+        if (playerInventory == null || economy == null)
             return;
 
-        int bundles = nearbyInventory.RemoveAllBundles();
+        int bundles = playerInventory.RemoveAllBundles();
 
         if (bundles <= 0)
             return;
@@ -63,12 +94,12 @@ public class GrassSellPoint : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!showPrototypeUI || nearbyInventory == null)
+        if (!showPrototypeUI || !isLookedAt)
             return;
 
-        string text = nearbyInventory.Bundles > 0
-            ? "Нажми " + sellKey + ", чтобы продать " + nearbyInventory.Bundles +
-              " пучков за $" + (nearbyInventory.Bundles * pricePerBundle)
+        string text = playerInventory != null && playerInventory.Bundles > 0
+            ? "Нажми " + sellKey + ", чтобы продать " + playerInventory.Bundles +
+              " пучков за $" + (playerInventory.Bundles * pricePerBundle)
             : "У тебя нет пучков травы";
 
         GUI.Label(
