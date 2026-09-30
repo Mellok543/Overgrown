@@ -4,10 +4,13 @@ public class GrassCutter : MonoBehaviour
 {
     [SerializeField] private Camera playerCamera;
 
+    [Header("Cutting")]
     [SerializeField] private float cutDistance = 2f;
     [SerializeField] private float cutRadius = 0.8f;
-
     [SerializeField] private LayerMask grassLayer;
+
+    public float CutDistance => cutDistance;
+    public float CutRadius => cutRadius;
 
     public void CutGrass()
     {
@@ -35,5 +38,15 @@ public class GrassCutter : MonoBehaviour
                 grass.Cut();
             }
         }
+    }
+
+    public void AddCutRadius(float amount)
+    {
+        cutRadius = Mathf.Max(0.1f, cutRadius + amount);
+    }
+
+    public void AddCutDistance(float amount)
+    {
+        cutDistance = Mathf.Max(0.1f, cutDistance + amount);
     }
 }
