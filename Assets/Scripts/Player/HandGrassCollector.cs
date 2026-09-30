@@ -12,18 +12,19 @@ public class HandGrassCollector : MonoBehaviour
     [SerializeField] private float interactDistance = 2f;
     [SerializeField] private float collectDuration = 0.6f;
     [SerializeField] private int bundlesPerCollect = 1;
-    [SerializeField] private float collectRadius = 0.45f;
+    [SerializeField] private float collectRadius = 0.75f;
     [SerializeField] private KeyCode collectKey = KeyCode.E;
 
     [Header("Limits")]
     [SerializeField] private float minimumCollectDuration = 0.15f;
     [SerializeField] private int maximumBundlesPerCollect = 5;
-    [SerializeField] private float maximumCollectRadius = 2f;
+    [SerializeField] private float maximumCollectRadius = 3.5f;
 
     [Header("Prototype UI")]
     [SerializeField] private bool showPrototypeUI = true;
 
     private GrassCuttable currentTarget;
+    private Collider currentTargetCollider;
     private float collectProgress;
 
     public float CollectDuration => collectDuration;
@@ -45,12 +46,17 @@ public class HandGrassCollector : MonoBehaviour
 
     private void Update()
     {
-        GrassCuttable target = FindTarget();
+        GrassCuttable target = FindTarget(out Collider targetCollider);
 
         if (target != currentTarget)
         {
             currentTarget = target;
+            currentTargetCollider = targetCollider;
             collectProgress = 0f;
+        }
+        else if (target != null)
+        {
+            currentTargetCollider = targetCollider;
         }
 
         if (currentTarget == null || currentTarget.IsCut)
@@ -81,8 +87,10 @@ public class HandGrassCollector : MonoBehaviour
         }
     }
 
-    private GrassCuttable FindTarget()
+    private GrassCuttable FindTarget(out Collider targetCollider)
     {
+        targetCollider = null;
+
         if (playerCamera == null)
             return null;
 
@@ -106,6 +114,7 @@ public class HandGrassCollector : MonoBehaviour
         if (grass == null || grass.IsCut)
             return null;
 
+        targetCollider = hit.collider;
         return grass;
     }
 
@@ -142,21 +151,27 @@ public class HandGrassCollector : MonoBehaviour
         List<GrassCuttable> result = new List<GrassCuttable>();
         HashSet<GrassCuttable> unique = new HashSet<GrassCuttable>();
 
-        if (currentTarget != null && !currentTarget.IsCut)
-        {
-            result.Add(currentTarget);
-            unique.Add(currentTarget);
-        }
+        if (currentTarget == null || currentTarget.IsCut)
+            return result;
+
+        Vector3 center = currentTargetCollider != null
+            ? currentTargetCollider.bounds.center
+            : currentTarget.transform.position;
+
+        result.Add(currentTarget);
+        unique.Add(currentTarget);
 
         if (result.Count >= maxCount)
             return result;
 
         Collider[] hits = Physics.OverlapSphere(
-            currentTarget.transform.position,
+            center,
             collectRadius,
             grassLayer,
             QueryTriggerInteraction.Collide
         );
+
+        List<GrassCuttable> nearby = new List<GrassCuttable>();
 
         foreach (Collider hit in hits)
         {
@@ -166,6 +181,18 @@ public class HandGrassCollector : MonoBehaviour
                 continue;
 
             unique.Add(grass);
+            nearby.Add(grass);
+        }
+
+        nearby.Sort((a, b) =>
+        {
+            float distanceA = (a.transform.position - center).sqrMagnitude;
+            float distanceB = (b.transform.position - center).sqrMagnitude;
+            return distanceA.CompareTo(distanceB);
+        });
+
+        foreach (GrassCuttable grass in nearby)
+        {
             result.Add(grass);
 
             if (result.Count >= maxCount)
@@ -217,8 +244,8 @@ public class HandGrassCollector : MonoBehaviour
         {
             text =
                 "Удерживай " + collectKey +
-                " — собрать до " + bundlesPerCollect +
-                " пучк. в радиусе " + collectRadius.ToString("0.00") + " м";
+                " — до " + bundlesPerCollect +
+                " пучк., радиус " + collectRadius.ToString("0.00") + " м";
         }
 
         GUI.Label(
