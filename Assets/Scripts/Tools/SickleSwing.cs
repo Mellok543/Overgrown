@@ -7,7 +7,7 @@ public class SickleSwing : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip swingSound;
     [SerializeField] private AudioClip cutSound;
-    
+
     [Header("References")]
     [SerializeField] private GrassCutter grassCutter;
 
@@ -29,6 +29,8 @@ public class SickleSwing : MonoBehaviour
     private bool isSwinging;
     private float nextSwingTime;
 
+    public float Cooldown => cooldown;
+
     private void Awake()
     {
         startRotation = transform.localRotation;
@@ -38,6 +40,7 @@ public class SickleSwing : MonoBehaviour
         {
             audioSource = GetComponent<AudioSource>();
         }
+
         if (grassCutter == null)
         {
             grassCutter = GetComponentInParent<GrassCutter>();
@@ -56,13 +59,20 @@ public class SickleSwing : MonoBehaviour
         }
     }
 
+    public void ReduceCooldown(float amount, float minimumCooldown = 0.12f)
+    {
+        cooldown = Mathf.Max(minimumCooldown, cooldown - amount);
+    }
+
     private IEnumerator Swing()
     {
         isSwinging = true;
+
         if (audioSource != null && swingSound != null)
         {
             audioSource.PlayOneShot(swingSound);
         }
+
         nextSwingTime = Time.time + cooldown;
 
         Quaternion targetRotation =
@@ -106,6 +116,7 @@ public class SickleSwing : MonoBehaviour
         if (grassCutter != null)
         {
             grassCutter.CutGrass();
+
             if (audioSource != null && cutSound != null)
             {
                 audioSource.PlayOneShot(cutSound);
