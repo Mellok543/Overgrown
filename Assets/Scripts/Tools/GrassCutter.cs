@@ -11,6 +11,9 @@ public class GrassCutter : MonoBehaviour
 
     public void CutGrass()
     {
+        if (playerCamera == null)
+            return;
+
         Vector3 cutPosition =
             playerCamera.transform.position +
             playerCamera.transform.forward * cutDistance;
@@ -18,7 +21,8 @@ public class GrassCutter : MonoBehaviour
         Collider[] grassObjects = Physics.OverlapSphere(
             cutPosition,
             cutRadius,
-            grassLayer
+            grassLayer,
+            QueryTriggerInteraction.Collide
         );
 
         foreach (Collider grassCollider in grassObjects)
