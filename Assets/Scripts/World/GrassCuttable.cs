@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GrassCuttable : MonoBehaviour
@@ -12,12 +13,14 @@ public class GrassCuttable : MonoBehaviour
 
     public bool IsCut => isCut;
 
+    public event Action<GrassCuttable, bool> CutStateChanged;
+
     private void Awake()
     {
-        SetupVisuals();
+        SetupVisuals(false);
     }
 
-    private void SetupVisuals()
+    private void SetupVisuals(bool notify)
     {
         if (fullGrassVariants == null || fullGrassVariants.Length == 0)
         {
@@ -43,6 +46,11 @@ public class GrassCuttable : MonoBehaviour
         }
 
         isCut = false;
+
+        if (notify)
+        {
+            CutStateChanged?.Invoke(this, false);
+        }
     }
 
     public void Cut()
@@ -67,10 +75,12 @@ public class GrassCuttable : MonoBehaviour
         {
             cutGrass.SetActive(true);
         }
+
+        CutStateChanged?.Invoke(this, true);
     }
 
     public void ResetGrass()
     {
-        SetupVisuals();
+        SetupVisuals(true);
     }
 }
