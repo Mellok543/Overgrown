@@ -24,7 +24,7 @@ public class GrassCuttable : MonoBehaviour
     {
         if (fullGrassVariants == null || fullGrassVariants.Length == 0)
         {
-            Debug.LogWarning($"GrassCuttable on {name} has no full grass variants assigned.", this);
+            Debug.LogWarning("GrassCuttable on " + name + " has no full grass variants assigned.", this);
             return;
         }
 
@@ -53,10 +53,10 @@ public class GrassCuttable : MonoBehaviour
         }
     }
 
-    public void Cut()
+    public bool Cut()
     {
         if (isCut)
-            return;
+            return false;
 
         isCut = true;
 
@@ -77,6 +77,7 @@ public class GrassCuttable : MonoBehaviour
         }
 
         CutStateChanged?.Invoke(this, true);
+        return true;
     }
 
     public void ResetGrass()
