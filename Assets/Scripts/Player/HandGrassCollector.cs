@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class HandGrassCollector : MonoBehaviour
@@ -8,15 +9,26 @@ public class HandGrassCollector : MonoBehaviour
 
     [Header("Collection")]
     [SerializeField] private LayerMask grassLayer;
-    [SerializeField] private float collectDistance = 2f;
+    [SerializeField] private float interactDistance = 2f;
     [SerializeField] private float collectDuration = 0.6f;
+    [SerializeField] private int bundlesPerCollect = 1;
+    [SerializeField] private float collectRadius = 0.45f;
     [SerializeField] private KeyCode collectKey = KeyCode.E;
+
+    [Header("Limits")]
+    [SerializeField] private float minimumCollectDuration = 0.15f;
+    [SerializeField] private int maximumBundlesPerCollect = 5;
+    [SerializeField] private float maximumCollectRadius = 2f;
 
     [Header("Prototype UI")]
     [SerializeField] private bool showPrototypeUI = true;
 
     private GrassCuttable currentTarget;
     private float collectProgress;
+
+    public float CollectDuration => collectDuration;
+    public int BundlesPerCollect => bundlesPerCollect;
+    public float CollectRadius => collectRadius;
 
     private void Awake()
     {
@@ -59,7 +71,7 @@ public class HandGrassCollector : MonoBehaviour
 
             if (collectProgress >= collectDuration)
             {
-                CollectCurrentTarget();
+                CollectGrass();
                 collectProgress = 0f;
             }
         }
@@ -82,7 +94,7 @@ public class HandGrassCollector : MonoBehaviour
         if (!Physics.Raycast(
                 ray,
                 out RaycastHit hit,
-                collectDistance,
+                interactDistance,
                 grassLayer,
                 QueryTriggerInteraction.Collide))
         {
@@ -97,18 +109,85 @@ public class HandGrassCollector : MonoBehaviour
         return grass;
     }
 
-    private void CollectCurrentTarget()
+    private void CollectGrass()
     {
         if (currentTarget == null || inventory == null || inventory.IsFull)
             return;
 
-        if (inventory.TryAddBundles(1) == 0)
+        int freeSpace = inventory.Capacity - inventory.Bundles;
+        int wantedCount = Mathf.Min(bundlesPerCollect, freeSpace);
+
+        if (wantedCount <= 0)
             return;
 
-        if (!currentTarget.Cut())
+        List<GrassCuttable> targets = FindGrassInRadius(wantedCount);
+
+        foreach (GrassCuttable grass in targets)
         {
-            inventory.RemoveBundles(1);
+            if (inventory.IsFull)
+                break;
+
+            if (inventory.TryAddBundles(1) == 0)
+                break;
+
+            if (!grass.Cut())
+            {
+                inventory.RemoveBundles(1);
+            }
         }
+    }
+
+    private List<GrassCuttable> FindGrassInRadius(int maxCount)
+    {
+        List<GrassCuttable> result = new List<GrassCuttable>();
+        HashSet<GrassCuttable> unique = new HashSet<GrassCuttable>();
+
+        if (currentTarget != null && !currentTarget.IsCut)
+        {
+            result.Add(currentTarget);
+            unique.Add(currentTarget);
+        }
+
+        if (result.Count >= maxCount)
+            return result;
+
+        Collider[] hits = Physics.OverlapSphere(
+            currentTarget.transform.position,
+            collectRadius,
+            grassLayer,
+            QueryTriggerInteraction.Collide
+        );
+
+        foreach (Collider hit in hits)
+        {
+            GrassCuttable grass = hit.GetComponentInParent<GrassCuttable>();
+
+            if (grass == null || grass.IsCut || unique.Contains(grass))
+                continue;
+
+            unique.Add(grass);
+            result.Add(grass);
+
+            if (result.Count >= maxCount)
+                break;
+        }
+
+        return result;
+    }
+
+    public void SetCollectDuration(float value)
+    {
+        collectDuration = Mathf.Max(minimumCollectDuration, value);
+    }
+
+    public void SetBundlesPerCollect(int value)
+    {
+        bundlesPerCollect = Mathf.Clamp(value, 1, maximumBundlesPerCollect);
+    }
+
+    public void SetCollectRadius(float value)
+    {
+        collectRadius = Mathf.Clamp(value, 0.1f, maximumCollectRadius);
     }
 
     private void OnGUI()
@@ -136,11 +215,14 @@ public class HandGrassCollector : MonoBehaviour
         }
         else
         {
-            text = "Удерживай " + collectKey + ", чтобы собрать траву";
+            text =
+                "Удерживай " + collectKey +
+                " — собрать до " + bundlesPerCollect +
+                " пучк. в радиусе " + collectRadius.ToString("0.00") + " м";
         }
 
         GUI.Label(
-            new Rect(Screen.width * 0.5f - 170f, Screen.height - 90f, 340f, 30f),
+            new Rect(Screen.width * 0.5f - 230f, Screen.height - 90f, 460f, 30f),
             text
         );
     }
