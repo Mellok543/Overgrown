@@ -13,7 +13,8 @@ public class PaletteTexturePostprocessor : AssetPostprocessor
             return;
 
         string fileName = System.IO.Path.GetFileNameWithoutExtension(assetPath);
-        if (!fileName.EndsWith("_Atlas") && !fileName.EndsWith("_Palette"))
+        bool isMask = fileName.EndsWith("_MetallicSmoothness");
+        if (!fileName.EndsWith("_Atlas") && !fileName.EndsWith("_Palette") && !isMask)
             return;
 
         TextureImporter importer = (TextureImporter)assetImporter;
@@ -21,5 +22,8 @@ public class PaletteTexturePostprocessor : AssetPostprocessor
         importer.mipmapEnabled = false;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.wrapMode = TextureWrapMode.Clamp;
+        // metallic (R) + smoothness (A) are data, not colour
+        if (isMask)
+            importer.sRGBTexture = false;
     }
 }
