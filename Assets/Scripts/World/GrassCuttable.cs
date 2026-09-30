@@ -29,7 +29,7 @@ public class GrassCuttable : MonoBehaviour
         }
 
         activeVariantIndex = chooseRandomVariant
-            ? Random.Range(0, fullGrassVariants.Length)
+            ? UnityEngine.Random.Range(0, fullGrassVariants.Length)
             : 0;
 
         for (int i = 0; i < fullGrassVariants.Length; i++)
