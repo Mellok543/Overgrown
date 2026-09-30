@@ -12,25 +12,35 @@ public class ToolInventory : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private HandGrassCollector handGrassCollector;
+
+    [Header("Sickle")]
     [SerializeField] private GameObject sickleObject;
     [SerializeField] private SickleSwing sickleSwing;
     [SerializeField] private GrassCutter grassCutter;
 
+    [Header("Trimmer")]
+    [SerializeField] private GameObject trimmerObject;
+    [SerializeField] private TrimmerController trimmerController;
+
     [Header("Input")]
     [SerializeField] private KeyCode handsKey = KeyCode.Alpha1;
     [SerializeField] private KeyCode sickleKey = KeyCode.Alpha2;
+    [SerializeField] private KeyCode trimmerKey = KeyCode.Alpha3;
 
     [Header("Start State")]
     [SerializeField] private bool startWithSickle = false;
+    [SerializeField] private bool startWithTrimmer = false;
 
     [Header("Prototype UI")]
     [SerializeField] private bool showPrototypeUI = true;
 
     private bool hasSickle;
+    private bool hasTrimmer;
     private ToolType currentTool = ToolType.Hands;
 
     public ToolType CurrentTool => currentTool;
     public bool HasSickle => hasSickle;
+    public bool HasTrimmer => hasTrimmer;
 
     private void Awake()
     {
@@ -49,7 +59,14 @@ public class ToolInventory : MonoBehaviour
             sickleSwing = sickleObject.GetComponent<SickleSwing>();
         }
 
+        if (trimmerController == null && trimmerObject != null)
+        {
+            trimmerController = trimmerObject.GetComponent<TrimmerController>();
+        }
+
         hasSickle = startWithSickle;
+        hasTrimmer = startWithTrimmer;
+
         SelectHands();
     }
 
@@ -64,6 +81,11 @@ public class ToolInventory : MonoBehaviour
         {
             SelectSickle();
         }
+
+        if (hasTrimmer && Input.GetKeyDown(trimmerKey))
+        {
+            SelectTrimmer();
+        }
     }
 
     public bool IsToolUnlocked(ToolType toolType)
@@ -72,15 +94,22 @@ public class ToolInventory : MonoBehaviour
         {
             ToolType.Hands => true,
             ToolType.Sickle => hasSickle,
+            ToolType.Trimmer => hasTrimmer,
             _ => false
         };
     }
 
     public void UnlockTool(ToolType toolType)
     {
-        if (toolType == ToolType.Sickle)
+        switch (toolType)
         {
-            hasSickle = true;
+            case ToolType.Sickle:
+                hasSickle = true;
+                break;
+
+            case ToolType.Trimmer:
+                hasTrimmer = true;
+                break;
         }
     }
 
@@ -108,10 +137,20 @@ public class ToolInventory : MonoBehaviour
         RefreshToolState();
     }
 
+    public void SelectTrimmer()
+    {
+        if (!hasTrimmer)
+            return;
+
+        currentTool = ToolType.Trimmer;
+        RefreshToolState();
+    }
+
     private void RefreshToolState()
     {
         bool handsActive = currentTool == ToolType.Hands;
         bool sickleActive = currentTool == ToolType.Sickle && hasSickle;
+        bool trimmerActive = currentTool == ToolType.Trimmer && hasTrimmer;
 
         if (handGrassCollector != null)
         {
@@ -132,6 +171,16 @@ public class ToolInventory : MonoBehaviour
         {
             sickleObject.SetActive(sickleActive);
         }
+
+        if (trimmerController != null)
+        {
+            trimmerController.enabled = trimmerActive;
+        }
+
+        if (trimmerObject != null)
+        {
+            trimmerObject.SetActive(trimmerActive);
+        }
     }
 
     private void OnGUI()
@@ -139,14 +188,28 @@ public class ToolInventory : MonoBehaviour
         if (!showPrototypeUI)
             return;
 
-        string currentToolText = currentTool == ToolType.Hands ? "Руки" : "Серп";
+        string currentToolText = currentTool switch
+        {
+            ToolType.Hands => "Руки",
+            ToolType.Sickle => "Серп",
+            ToolType.Trimmer => "Триммер",
+            _ => currentTool.ToString()
+        };
 
         GUI.Label(new Rect(20f, 155f, 300f, 25f), "Инструмент: " + currentToolText);
         GUI.Label(new Rect(20f, 180f, 300f, 25f), "1 — Руки");
 
+        int y = 205;
+
         if (hasSickle)
         {
-            GUI.Label(new Rect(20f, 205f, 300f, 25f), "2 — Серп");
+            GUI.Label(new Rect(20f, y, 300f, 25f), "2 — Серп");
+            y += 25;
+        }
+
+        if (hasTrimmer)
+        {
+            GUI.Label(new Rect(20f, y, 300f, 25f), "3 — Триммер");
         }
     }
 }
