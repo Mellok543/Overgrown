@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -46,7 +45,6 @@ public class GrassScatterAreaEditor : Editor
         }
 
         boundsCollider.isTrigger = true;
-
         ClearGrass(area);
 
         GameObject root = new GameObject(GeneratedRootName);
@@ -84,16 +82,12 @@ public class GrassScatterAreaEditor : Editor
                 continue;
             }
 
-            float slope = Vector3.Angle(hit.normal, Vector3.up);
-
-            if (slope > area.MaxGroundSlope)
+            if (Vector3.Angle(hit.normal, Vector3.up) > area.MaxGroundSlope)
                 continue;
 
             Vector3 placementPoint = hit.point + hit.normal * 0.01f;
 
-            Vector3 closestOnBounds = boundsCollider.ClosestPoint(placementPoint + Vector3.up * 0.01f);
-
-            if ((closestOnBounds - (placementPoint + Vector3.up * 0.01f)).sqrMagnitude > 0.0004f)
+            if (!IsPointInsideBounds(boundsCollider, placementPoint))
                 continue;
 
             if (area.IsInsideExclusionVolume(placementPoint))
@@ -112,7 +106,6 @@ public class GrassScatterAreaEditor : Editor
 
             Undo.RegisterCreatedObjectUndo(instance, "Generate grass");
             instance.transform.SetParent(root.transform, true);
-            instance.transform.position = placementPoint;
 
             if (area.RandomYRotation)
             {
@@ -129,6 +122,16 @@ public class GrassScatterAreaEditor : Editor
             );
 
             instance.transform.localScale *= scale;
+            instance.transform.position = placementPoint;
+
+            AlignVisualBoundsToPoint(instance, placementPoint);
+
+            if (!AreVisualBoundsInsideArea(instance, boundsCollider))
+            {
+                Undo.DestroyObjectImmediate(instance);
+                continue;
+            }
+
             placed++;
         }
 
@@ -155,9 +158,13 @@ public class GrassScatterAreaEditor : Editor
         BoxCollider boundsCollider,
         Vector3 placementPoint)
     {
-        Collider[] overlaps = Physics.OverlapSphere(
-            placementPoint + Vector3.up * 0.2f,
-            Mathf.Max(0.05f, area.ObstacleClearance),
+        float radius = Mathf.Max(0.05f, area.ObstacleClearance);
+        float halfHeight = Mathf.Max(1f, area.RayHeight * 0.5f);
+
+        Collider[] overlaps = Physics.OverlapBox(
+            placementPoint + Vector3.up * halfHeight,
+            new Vector3(radius, halfHeight, radius),
+            Quaternion.identity,
             ~0,
             QueryTriggerInteraction.Ignore
         );
@@ -180,6 +187,70 @@ public class GrassScatterAreaEditor : Editor
         }
 
         return false;
+    }
+
+    private static void AlignVisualBoundsToPoint(GameObject instance, Vector3 placementPoint)
+    {
+        Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+
+        if (renderers.Length == 0)
+            return;
+
+        Bounds bounds = renderers[0].bounds;
+
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+
+        Vector3 offset = new Vector3(
+            placementPoint.x - bounds.center.x,
+            placementPoint.y - bounds.min.y,
+            placementPoint.z - bounds.center.z
+        );
+
+        instance.transform.position += offset;
+    }
+
+    private static bool AreVisualBoundsInsideArea(GameObject instance, BoxCollider boundsCollider)
+    {
+        Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(true);
+
+        if (renderers.Length == 0)
+            return true;
+
+        Bounds bounds = renderers[0].bounds;
+
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+
+        Vector3[] corners =
+        {
+            new Vector3(bounds.min.x, bounds.min.y, bounds.min.z),
+            new Vector3(bounds.min.x, bounds.min.y, bounds.max.z),
+            new Vector3(bounds.max.x, bounds.min.y, bounds.min.z),
+            new Vector3(bounds.max.x, bounds.min.y, bounds.max.z)
+        };
+
+        foreach (Vector3 corner in corners)
+        {
+            if (!IsPointInsideBounds(boundsCollider, corner))
+                return false;
+        }
+
+        return true;
+    }
+
+    private static bool IsPointInsideBounds(BoxCollider boundsCollider, Vector3 worldPoint)
+    {
+        Vector3 local = boundsCollider.transform.InverseTransformPoint(worldPoint) - boundsCollider.center;
+        Vector3 half = boundsCollider.size * 0.5f;
+
+        return Mathf.Abs(local.x) <= half.x + 0.001f
+            && Mathf.Abs(local.y) <= half.y + 0.5f
+            && Mathf.Abs(local.z) <= half.z + 0.001f;
     }
 
     private static void ClearGrass(GrassScatterArea area)
