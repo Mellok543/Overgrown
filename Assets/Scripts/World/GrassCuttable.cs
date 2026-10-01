@@ -8,8 +8,18 @@ public class GrassCuttable : MonoBehaviour
     [SerializeField] private GameObject cutGrass;
     [SerializeField] private bool chooseRandomVariant = true;
 
+    [Header("Highlight")]
+    [SerializeField] private Color highlightColor = new Color(1f, 0.9f, 0.35f, 1f);
+    [SerializeField, Range(0f, 3f)] private float highlightIntensity = 1.35f;
+
     private bool isCut;
     private int activeVariantIndex;
+    private bool isHighlighted;
+
+    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+
+    private readonly MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
 
     public bool IsCut => isCut;
 
@@ -18,6 +28,14 @@ public class GrassCuttable : MonoBehaviour
     private void Awake()
     {
         SetupVisuals(false);
+    }
+
+    private void OnDisable()
+    {
+        if (isHighlighted)
+        {
+            SetHighlighted(false);
+        }
     }
 
     private void SetupVisuals(bool notify)
@@ -46,6 +64,7 @@ public class GrassCuttable : MonoBehaviour
         }
 
         isCut = false;
+        SetHighlighted(false);
 
         if (notify)
         {
@@ -53,11 +72,65 @@ public class GrassCuttable : MonoBehaviour
         }
     }
 
+    public void SetHighlighted(bool highlighted)
+    {
+        if (isHighlighted == highlighted)
+            return;
+
+        isHighlighted = highlighted;
+
+        GameObject activeVisual = GetActiveVisual();
+
+        if (activeVisual == null)
+            return;
+
+        Renderer[] renderers = activeVisual.GetComponentsInChildren<Renderer>(true);
+
+        foreach (Renderer renderer in renderers)
+        {
+            if (renderer == null)
+                continue;
+
+            renderer.GetPropertyBlock(propertyBlock);
+
+            if (highlighted)
+            {
+                Color glow = highlightColor * highlightIntensity;
+                propertyBlock.SetColor(BaseColorId, highlightColor);
+                propertyBlock.SetColor(EmissionColorId, glow);
+            }
+            else
+            {
+                propertyBlock.Clear();
+            }
+
+            renderer.SetPropertyBlock(propertyBlock);
+        }
+    }
+
+    private GameObject GetActiveVisual()
+    {
+        if (isCut)
+        {
+            return cutGrass;
+        }
+
+        if (fullGrassVariants == null ||
+            activeVariantIndex < 0 ||
+            activeVariantIndex >= fullGrassVariants.Length)
+        {
+            return null;
+        }
+
+        return fullGrassVariants[activeVariantIndex];
+    }
+
     public bool Cut()
     {
         if (isCut)
             return false;
 
+        SetHighlighted(false);
         isCut = true;
 
         if (fullGrassVariants != null)
