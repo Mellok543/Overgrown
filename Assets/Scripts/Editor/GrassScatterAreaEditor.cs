@@ -51,13 +51,10 @@ public class GrassScatterAreaEditor : Editor
         {
             attempts++;
 
-            Vector3 localOffset = new Vector3(
-                Random.Range(-area.AreaSize.x * 0.5f, area.AreaSize.x * 0.5f),
-                0f,
-                Random.Range(-area.AreaSize.y * 0.5f, area.AreaSize.y * 0.5f)
-            );
+            float offsetX = Random.Range(-area.AreaSize.x * 0.5f, area.AreaSize.x * 0.5f);
+            float offsetZ = Random.Range(-area.AreaSize.y * 0.5f, area.AreaSize.y * 0.5f);
 
-            Vector3 worldPoint = area.transform.TransformPoint(localOffset);
+            Vector3 worldPoint = area.GetWorldPoint(offsetX, offsetZ);
             Vector3 rayStart = worldPoint + Vector3.up * area.RayHeight;
 
             if (!Physics.Raycast(
@@ -97,7 +94,8 @@ public class GrassScatterAreaEditor : Editor
                 continue;
 
             Undo.RegisterCreatedObjectUndo(instance, "Generate grass");
-            instance.transform.SetParent(root.transform);
+
+            instance.transform.SetParent(root.transform, true);
             instance.transform.position = placementPoint;
 
             if (area.RandomYRotation)
