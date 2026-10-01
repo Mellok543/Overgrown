@@ -7,6 +7,12 @@ public class HandGrassCollector : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private GrassInventory inventory;
 
+    [Header("Hand Animation")]
+    [SerializeField] private Transform handTransform;
+    [SerializeField] private Vector3 handCollectOffset = new Vector3(0f, -0.12f, 0.18f);
+    [SerializeField] private Vector3 handCollectEuler = new Vector3(18f, 0f, -10f);
+    [SerializeField] private float handAnimationSpeed = 12f;
+
     [Header("Collection")]
     [SerializeField] private LayerMask grassLayer;
     [SerializeField] private float interactDistance = 2f;
@@ -27,6 +33,10 @@ public class HandGrassCollector : MonoBehaviour
     private Collider currentTargetCollider;
     private float collectProgress;
 
+    private Vector3 handStartLocalPosition;
+    private Quaternion handStartLocalRotation;
+    private bool handPoseCached;
+
     public float CollectDuration => collectDuration;
     public int BundlesPerCollect => bundlesPerCollect;
     public float CollectRadius => collectRadius;
@@ -42,6 +52,22 @@ public class HandGrassCollector : MonoBehaviour
         {
             inventory = GetComponent<GrassInventory>();
         }
+
+        CacheHandPose();
+    }
+
+    private void OnDisable()
+    {
+        if (currentTarget != null)
+        {
+            currentTarget.SetHighlighted(false);
+        }
+
+        currentTarget = null;
+        currentTargetCollider = null;
+        collectProgress = 0f;
+
+        ResetHandImmediate();
     }
 
     private void Update()
@@ -50,28 +76,41 @@ public class HandGrassCollector : MonoBehaviour
 
         if (target != currentTarget)
         {
+            if (currentTarget != null)
+            {
+                currentTarget.SetHighlighted(false);
+            }
+
             currentTarget = target;
             currentTargetCollider = targetCollider;
             collectProgress = 0f;
+
+            if (currentTarget != null)
+            {
+                currentTarget.SetHighlighted(true);
+            }
         }
         else if (target != null)
         {
             currentTargetCollider = targetCollider;
         }
 
-        if (currentTarget == null || currentTarget.IsCut)
+        bool canCollect =
+            currentTarget != null &&
+            !currentTarget.IsCut &&
+            inventory != null &&
+            !inventory.IsFull;
+
+        if (!canCollect)
         {
             collectProgress = 0f;
+            AnimateHand(false);
             return;
         }
 
-        if (inventory == null || inventory.IsFull)
-        {
-            collectProgress = 0f;
-            return;
-        }
+        bool collecting = Input.GetKey(collectKey);
 
-        if (Input.GetKey(collectKey))
+        if (collecting)
         {
             collectProgress += Time.deltaTime;
 
@@ -85,6 +124,72 @@ public class HandGrassCollector : MonoBehaviour
         {
             collectProgress = 0f;
         }
+
+        AnimateHand(collecting);
+    }
+
+    private void CacheHandPose()
+    {
+        if (handTransform == null)
+            return;
+
+        handStartLocalPosition = handTransform.localPosition;
+        handStartLocalRotation = handTransform.localRotation;
+        handPoseCached = true;
+    }
+
+    private void AnimateHand(bool collecting)
+    {
+        if (handTransform == null)
+            return;
+
+        if (!handPoseCached)
+        {
+            CacheHandPose();
+        }
+
+        Vector3 targetPosition = handStartLocalPosition;
+        Quaternion targetRotation = handStartLocalRotation;
+
+        if (collecting)
+        {
+            float duration = Mathf.Max(0.01f, collectDuration);
+            float t = Mathf.Clamp01(collectProgress / duration);
+
+            // Reach forward, then pull back slightly near the end.
+            float reach = Mathf.Sin(t * Mathf.PI);
+
+            targetPosition =
+                handStartLocalPosition +
+                handCollectOffset * reach;
+
+            targetRotation =
+                handStartLocalRotation *
+                Quaternion.Euler(handCollectEuler * reach);
+        }
+
+        float lerp = 1f - Mathf.Exp(-handAnimationSpeed * Time.deltaTime);
+
+        handTransform.localPosition = Vector3.Lerp(
+            handTransform.localPosition,
+            targetPosition,
+            lerp
+        );
+
+        handTransform.localRotation = Quaternion.Slerp(
+            handTransform.localRotation,
+            targetRotation,
+            lerp
+        );
+    }
+
+    private void ResetHandImmediate()
+    {
+        if (handTransform == null || !handPoseCached)
+            return;
+
+        handTransform.localPosition = handStartLocalPosition;
+        handTransform.localRotation = handStartLocalRotation;
     }
 
     private GrassCuttable FindTarget(out Collider targetCollider)
