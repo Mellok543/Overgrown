@@ -39,6 +39,14 @@ public class GrassScatterArea : MonoBehaviour
     public float RandomScaleMax => randomScaleMax;
     public bool RandomYRotation => randomYRotation;
 
+    public Vector3 GetWorldPoint(float localX, float localZ)
+    {
+        Vector3 right = transform.right.normalized;
+        Vector3 forward = transform.forward.normalized;
+
+        return transform.position + right * localX + forward * localZ;
+    }
+
     public bool IsInsideExclusionVolume(Vector3 worldPoint)
     {
         if (exclusionColliders == null)
@@ -60,10 +68,20 @@ public class GrassScatterArea : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.matrix = transform.localToWorldMatrix;
+        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+        Matrix4x4 oldMatrix = Gizmos.matrix;
+
+        Gizmos.matrix = Matrix4x4.TRS(
+            transform.position,
+            rotation,
+            Vector3.one
+        );
+
         Gizmos.DrawWireCube(
             Vector3.zero,
             new Vector3(areaSize.x, 0.05f, areaSize.y)
         );
+
+        Gizmos.matrix = oldMatrix;
     }
 }
