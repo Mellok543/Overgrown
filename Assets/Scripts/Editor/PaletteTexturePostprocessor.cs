@@ -8,6 +8,18 @@ public class PaletteTexturePostprocessor : AssetPostprocessor
 {
     private void OnPreprocessTexture()
     {
+        // Grass card atlases (alpha clipping): keep alpha coverage in the mips so far grass doesn't thin out
+        if (assetPath.StartsWith("Assets/Art/Textures/Grass/") && assetPath.Contains("_Stylized_Atlas"))
+        {
+            TextureImporter grass = (TextureImporter)assetImporter;
+            grass.alphaIsTransparency = true;
+            grass.wrapMode = TextureWrapMode.Clamp;
+            grass.mipmapEnabled = true;
+            grass.mipMapsPreserveCoverage = true;
+            grass.alphaTestReferenceValue = 0.5f;
+            return;
+        }
+
         // Grass_Atlas is a smooth gradient and wants regular filtering + mips
         if (!assetPath.StartsWith("Assets/Art/Models/") || assetPath.StartsWith("Assets/Art/Models/Grass/"))
             return;
