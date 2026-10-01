@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -34,6 +35,18 @@ public class GrassScatterAreaEditor : Editor
             return;
         }
 
+        BoxCollider boundsCollider = area.AreaBounds != null
+            ? area.AreaBounds
+            : area.GetComponent<BoxCollider>();
+
+        if (boundsCollider == null)
+        {
+            Debug.LogWarning("GrassScatterArea: BoxCollider bounds are required.", area);
+            return;
+        }
+
+        boundsCollider.isTrigger = true;
+
         ClearGrass(area);
 
         GameObject root = new GameObject(GeneratedRootName);
@@ -51,10 +64,13 @@ public class GrassScatterAreaEditor : Editor
         {
             attempts++;
 
-            float offsetX = Random.Range(-area.AreaSize.x * 0.5f, area.AreaSize.x * 0.5f);
-            float offsetZ = Random.Range(-area.AreaSize.y * 0.5f, area.AreaSize.y * 0.5f);
+            Vector3 localPoint = boundsCollider.center + new Vector3(
+                Random.Range(-boundsCollider.size.x * 0.5f, boundsCollider.size.x * 0.5f),
+                0f,
+                Random.Range(-boundsCollider.size.z * 0.5f, boundsCollider.size.z * 0.5f)
+            );
 
-            Vector3 worldPoint = area.GetWorldPoint(offsetX, offsetZ);
+            Vector3 worldPoint = boundsCollider.transform.TransformPoint(localPoint);
             Vector3 rayStart = worldPoint + Vector3.up * area.RayHeight;
 
             if (!Physics.Raycast(
@@ -75,15 +91,16 @@ public class GrassScatterAreaEditor : Editor
 
             Vector3 placementPoint = hit.point + hit.normal * 0.01f;
 
+            Vector3 closestOnBounds = boundsCollider.ClosestPoint(placementPoint + Vector3.up * 0.01f);
+
+            if ((closestOnBounds - (placementPoint + Vector3.up * 0.01f)).sqrMagnitude > 0.0004f)
+                continue;
+
             if (area.IsInsideExclusionVolume(placementPoint))
                 continue;
 
-            if (area.ObstacleLayer.value != 0 &&
-                Physics.CheckSphere(
-                    placementPoint + Vector3.up * 0.15f,
-                    Mathf.Max(0.01f, area.ObstacleClearance),
-                    area.ObstacleLayer,
-                    QueryTriggerInteraction.Ignore))
+            if (area.BlockAnyNonGroundCollider &&
+                HasBlockingCollider(area, boundsCollider, placementPoint))
             {
                 continue;
             }
@@ -94,7 +111,6 @@ public class GrassScatterAreaEditor : Editor
                 continue;
 
             Undo.RegisterCreatedObjectUndo(instance, "Generate grass");
-
             instance.transform.SetParent(root.transform, true);
             instance.transform.position = placementPoint;
 
@@ -121,8 +137,7 @@ public class GrassScatterAreaEditor : Editor
         if (placed < area.GrassCount)
         {
             Debug.LogWarning(
-                $"GrassScatterArea: placed {placed}/{area.GrassCount} grass objects after {attempts} attempts. " +
-                "Increase Max Placement Attempts or reduce obstacle/exclusion coverage.",
+                $"GrassScatterArea: placed {placed}/{area.GrassCount} grass objects after {attempts} attempts.",
                 area
             );
         }
@@ -133,6 +148,38 @@ public class GrassScatterAreaEditor : Editor
                 area
             );
         }
+    }
+
+    private static bool HasBlockingCollider(
+        GrassScatterArea area,
+        BoxCollider boundsCollider,
+        Vector3 placementPoint)
+    {
+        Collider[] overlaps = Physics.OverlapSphere(
+            placementPoint + Vector3.up * 0.2f,
+            Mathf.Max(0.05f, area.ObstacleClearance),
+            ~0,
+            QueryTriggerInteraction.Ignore
+        );
+
+        foreach (Collider collider in overlaps)
+        {
+            if (collider == null || !collider.enabled)
+                continue;
+
+            if (collider == boundsCollider)
+                continue;
+
+            if (((1 << collider.gameObject.layer) & area.GroundLayer.value) != 0)
+                continue;
+
+            if (collider.GetComponentInParent<GrassCuttable>() != null)
+                continue;
+
+            return true;
+        }
+
+        return false;
     }
 
     private static void ClearGrass(GrassScatterArea area)
