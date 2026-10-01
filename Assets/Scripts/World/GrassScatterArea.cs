@@ -1,14 +1,15 @@
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider))]
 public class GrassScatterArea : MonoBehaviour
 {
     [Header("Prefab")]
     [SerializeField] private GameObject grassPrefab;
 
     [Header("Area")]
-    [SerializeField] private Vector2 areaSize = new Vector2(10f, 10f);
     [SerializeField] private int grassCount = 200;
     [SerializeField] private int maxPlacementAttempts = 5000;
+    [SerializeField] private BoxCollider areaBounds;
 
     [Header("Ground")]
     [SerializeField] private LayerMask groundLayer = ~0;
@@ -16,8 +17,8 @@ public class GrassScatterArea : MonoBehaviour
     [SerializeField, Range(0f, 60f)] private float maxGroundSlope = 35f;
 
     [Header("Avoid Obstacles")]
-    [SerializeField] private LayerMask obstacleLayer;
     [SerializeField] private float obstacleClearance = 0.35f;
+    [SerializeField] private bool blockAnyNonGroundCollider = true;
     [SerializeField] private Collider[] exclusionColliders;
 
     [Header("Placement")]
@@ -26,25 +27,37 @@ public class GrassScatterArea : MonoBehaviour
     [SerializeField] private bool randomYRotation = true;
 
     public GameObject GrassPrefab => grassPrefab;
-    public Vector2 AreaSize => areaSize;
     public int GrassCount => grassCount;
     public int MaxPlacementAttempts => maxPlacementAttempts;
+    public BoxCollider AreaBounds => areaBounds;
     public LayerMask GroundLayer => groundLayer;
     public float RayHeight => rayHeight;
     public float MaxGroundSlope => maxGroundSlope;
-    public LayerMask ObstacleLayer => obstacleLayer;
     public float ObstacleClearance => obstacleClearance;
+    public bool BlockAnyNonGroundCollider => blockAnyNonGroundCollider;
     public Collider[] ExclusionColliders => exclusionColliders;
     public float RandomScaleMin => randomScaleMin;
     public float RandomScaleMax => randomScaleMax;
     public bool RandomYRotation => randomYRotation;
 
-    public Vector3 GetWorldPoint(float localX, float localZ)
+    private void Reset()
     {
-        Vector3 right = transform.right.normalized;
-        Vector3 forward = transform.forward.normalized;
+        areaBounds = GetComponent<BoxCollider>();
 
-        return transform.position + right * localX + forward * localZ;
+        if (areaBounds != null)
+        {
+            areaBounds.isTrigger = true;
+            areaBounds.center = Vector3.zero;
+            areaBounds.size = new Vector3(10f, 1f, 10f);
+        }
+    }
+
+    private void Awake()
+    {
+        if (areaBounds == null)
+        {
+            areaBounds = GetComponent<BoxCollider>();
+        }
     }
 
     public bool IsInsideExclusionVolume(Vector3 worldPoint)
@@ -68,18 +81,20 @@ public class GrassScatterArea : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Quaternion rotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
-        Matrix4x4 oldMatrix = Gizmos.matrix;
+        if (areaBounds == null)
+        {
+            areaBounds = GetComponent<BoxCollider>();
+        }
 
-        Gizmos.matrix = Matrix4x4.TRS(
-            transform.position,
-            rotation,
-            Vector3.one
-        );
+        if (areaBounds == null)
+            return;
+
+        Matrix4x4 oldMatrix = Gizmos.matrix;
+        Gizmos.matrix = areaBounds.transform.localToWorldMatrix;
 
         Gizmos.DrawWireCube(
-            Vector3.zero,
-            new Vector3(areaSize.x, 0.05f, areaSize.y)
+            areaBounds.center,
+            areaBounds.size
         );
 
         Gizmos.matrix = oldMatrix;
