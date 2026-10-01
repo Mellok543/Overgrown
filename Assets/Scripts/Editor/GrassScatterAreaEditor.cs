@@ -44,9 +44,13 @@ public class GrassScatterAreaEditor : Editor
         root.transform.localScale = Vector3.one;
 
         int placed = 0;
+        int attempts = 0;
+        int maxAttempts = Mathf.Max(area.GrassCount, area.MaxPlacementAttempts);
 
-        for (int i = 0; i < area.GrassCount; i++)
+        while (placed < area.GrassCount && attempts < maxAttempts)
         {
+            attempts++;
+
             Vector3 localOffset = new Vector3(
                 Random.Range(-area.AreaSize.x * 0.5f, area.AreaSize.x * 0.5f),
                 0f,
@@ -67,6 +71,26 @@ public class GrassScatterAreaEditor : Editor
                 continue;
             }
 
+            float slope = Vector3.Angle(hit.normal, Vector3.up);
+
+            if (slope > area.MaxGroundSlope)
+                continue;
+
+            Vector3 placementPoint = hit.point + hit.normal * 0.01f;
+
+            if (area.IsInsideExclusionVolume(placementPoint))
+                continue;
+
+            if (area.ObstacleLayer.value != 0 &&
+                Physics.CheckSphere(
+                    placementPoint + Vector3.up * 0.15f,
+                    Mathf.Max(0.01f, area.ObstacleClearance),
+                    area.ObstacleLayer,
+                    QueryTriggerInteraction.Ignore))
+            {
+                continue;
+            }
+
             GameObject instance = PrefabUtility.InstantiatePrefab(area.GrassPrefab) as GameObject;
 
             if (instance == null)
@@ -74,7 +98,7 @@ public class GrassScatterAreaEditor : Editor
 
             Undo.RegisterCreatedObjectUndo(instance, "Generate grass");
             instance.transform.SetParent(root.transform);
-            instance.transform.position = hit.point;
+            instance.transform.position = placementPoint;
 
             if (area.RandomYRotation)
             {
@@ -95,7 +119,22 @@ public class GrassScatterAreaEditor : Editor
         }
 
         EditorUtility.SetDirty(area);
-        Debug.Log($"GrassScatterArea: placed {placed} grass objects.", area);
+
+        if (placed < area.GrassCount)
+        {
+            Debug.LogWarning(
+                $"GrassScatterArea: placed {placed}/{area.GrassCount} grass objects after {attempts} attempts. " +
+                "Increase Max Placement Attempts or reduce obstacle/exclusion coverage.",
+                area
+            );
+        }
+        else
+        {
+            Debug.Log(
+                $"GrassScatterArea: placed {placed} grass objects in {attempts} attempts.",
+                area
+            );
+        }
     }
 
     private static void ClearGrass(GrassScatterArea area)
