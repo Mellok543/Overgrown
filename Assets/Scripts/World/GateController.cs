@@ -5,6 +5,7 @@ public class GateController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform gate;
     [SerializeField] private Camera playerCamera;
+    [SerializeField] private GateVines gateVines;
 
     [Header("Interaction")]
     [SerializeField] private float interactDistance = 2.5f;
@@ -44,7 +45,10 @@ public class GateController : MonoBehaviour
 
         if (isLookedAt && Input.GetKeyDown(interactKey))
         {
-            isOpen = !isOpen;
+            if (gateVines == null || gateVines.IsCleared)
+            {
+                isOpen = !isOpen;
+            }
         }
 
         Quaternion targetRotation = isOpen ? openRotation : closedRotation;
@@ -84,11 +88,21 @@ public class GateController : MonoBehaviour
         if (!showPrototypeUI || !isLookedAt)
             return;
 
-        string action = isOpen ? "закрыть" : "открыть";
+        string text;
+
+        if (gateVines != null && !gateVines.IsCleared)
+        {
+            text = "Калитка заросла";
+        }
+        else
+        {
+            string action = isOpen ? "закрыть" : "открыть";
+            text = "Нажми " + interactKey + ", чтобы " + action + " калитку";
+        }
 
         GUI.Label(
-            new Rect(Screen.width * 0.5f - 170f, Screen.height - 55f, 340f, 30f),
-            "Нажми " + interactKey + ", чтобы " + action + " калитку"
+            new Rect(Screen.width * 0.5f - 180f, Screen.height - 55f, 360f, 30f),
+            text
         );
     }
 }
