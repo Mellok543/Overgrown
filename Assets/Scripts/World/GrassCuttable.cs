@@ -28,6 +28,7 @@ public class GrassCuttable : MonoBehaviour
 
     private void Awake()
     {
+        propertyBlock = new MaterialPropertyBlock();
         SetupVisuals(false);
     }
 
@@ -92,7 +93,12 @@ public class GrassCuttable : MonoBehaviour
             if (renderer == null)
                 continue;
 
-            if (propertyBlock == null)\n            {\n                propertyBlock = new MaterialPropertyBlock();\n            }\n\n            renderer.GetPropertyBlock(propertyBlock);
+            if (propertyBlock == null)
+            {
+                propertyBlock = new MaterialPropertyBlock();
+            }
+
+            renderer.GetPropertyBlock(propertyBlock);
 
             if (highlighted)
             {
