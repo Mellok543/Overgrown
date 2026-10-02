@@ -17,6 +17,7 @@ public class GrassCuttable : MonoBehaviour
     private bool isHighlighted;
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    private static readonly int LegacyColorId = Shader.PropertyToID("_Color");
     private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
 
     private readonly MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
@@ -97,6 +98,7 @@ public class GrassCuttable : MonoBehaviour
             {
                 Color glow = highlightColor * highlightIntensity;
                 propertyBlock.SetColor(BaseColorId, highlightColor);
+                propertyBlock.SetColor(LegacyColorId, highlightColor);
                 propertyBlock.SetColor(EmissionColorId, glow);
             }
             else
