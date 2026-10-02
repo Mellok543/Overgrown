@@ -20,7 +20,7 @@ public class GrassCuttable : MonoBehaviour
     private static readonly int LegacyColorId = Shader.PropertyToID("_Color");
     private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
 
-    private readonly MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+    private MaterialPropertyBlock propertyBlock;
 
     public bool IsCut => isCut;
 
@@ -92,7 +92,7 @@ public class GrassCuttable : MonoBehaviour
             if (renderer == null)
                 continue;
 
-            renderer.GetPropertyBlock(propertyBlock);
+            if (propertyBlock == null)\n            {\n                propertyBlock = new MaterialPropertyBlock();\n            }\n\n            renderer.GetPropertyBlock(propertyBlock);
 
             if (highlighted)
             {
