@@ -26,6 +26,14 @@ public class HandGrassCollector : MonoBehaviour
     [SerializeField] private int maximumBundlesPerCollect = 5;
     [SerializeField] private float maximumCollectRadius = 3.5f;
 
+    [Header("Crosshair")]
+    [SerializeField] private bool showCrosshair = true;
+    [SerializeField] private float crosshairSize = 7f;
+    [SerializeField] private float crosshairThickness = 2f;
+    [SerializeField] private float crosshairGap = 4f;
+    [SerializeField] private Color crosshairColor = Color.white;
+    [SerializeField] private Color targetCrosshairColor = new Color(1f, 0.9f, 0.25f, 1f);
+
     [Header("Prototype UI")]
     [SerializeField] private bool showPrototypeUI = true;
 
@@ -93,6 +101,9 @@ public class HandGrassCollector : MonoBehaviour
         else if (target != null)
         {
             currentTargetCollider = targetCollider;
+
+            // Re-apply every frame so hover feedback survives visual/material changes.
+            currentTarget.SetHighlighted(true);
         }
 
         bool canCollect =
@@ -324,6 +335,8 @@ public class HandGrassCollector : MonoBehaviour
 
     private void OnGUI()
     {
+        DrawCrosshair();
+
         if (!showPrototypeUI || currentTarget == null)
             return;
 
@@ -357,5 +370,61 @@ public class HandGrassCollector : MonoBehaviour
             new Rect(Screen.width * 0.5f - 230f, Screen.height - 90f, 460f, 30f),
             text
         );
+    }
+
+    private void DrawCrosshair()
+    {
+        if (!showCrosshair)
+            return;
+
+        Color previousColor = GUI.color;
+        GUI.color = currentTarget != null ? targetCrosshairColor : crosshairColor;
+
+        float centerX = Screen.width * 0.5f;
+        float centerY = Screen.height * 0.5f;
+
+        Texture2D pixel = Texture2D.whiteTexture;
+
+        GUI.DrawTexture(
+            new Rect(
+                centerX - crosshairGap - crosshairSize,
+                centerY - crosshairThickness * 0.5f,
+                crosshairSize,
+                crosshairThickness
+            ),
+            pixel
+        );
+
+        GUI.DrawTexture(
+            new Rect(
+                centerX + crosshairGap,
+                centerY - crosshairThickness * 0.5f,
+                crosshairSize,
+                crosshairThickness
+            ),
+            pixel
+        );
+
+        GUI.DrawTexture(
+            new Rect(
+                centerX - crosshairThickness * 0.5f,
+                centerY - crosshairGap - crosshairSize,
+                crosshairThickness,
+                crosshairSize
+            ),
+            pixel
+        );
+
+        GUI.DrawTexture(
+            new Rect(
+                centerX - crosshairThickness * 0.5f,
+                centerY + crosshairGap,
+                crosshairThickness,
+                crosshairSize
+            ),
+            pixel
+        );
+
+        GUI.color = previousColor;
     }
 }
