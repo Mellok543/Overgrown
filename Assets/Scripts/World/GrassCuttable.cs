@@ -19,7 +19,7 @@ public class GrassCuttable : MonoBehaviour
     private bool isHighlighted;
 
     private GameObject highlightedVisual;
-    private Vector3 highlightedVisualOriginalScale;
+    private Vector3 originalRootScale;
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int LegacyColorId = Shader.PropertyToID("_Color");
@@ -34,6 +34,7 @@ public class GrassCuttable : MonoBehaviour
     private void Awake()
     {
         propertyBlock = new MaterialPropertyBlock();
+        originalRootScale = transform.localScale;
         SetupVisuals(false);
     }
 
@@ -101,12 +102,10 @@ public class GrassCuttable : MonoBehaviour
 
         isHighlighted = true;
         highlightedVisual = activeVisual;
-        highlightedVisualOriginalScale = activeVisual.transform.localScale;
 
         if (useScaleHighlight)
         {
-            activeVisual.transform.localScale =
-                highlightedVisualOriginalScale * highlightScaleMultiplier;
+            transform.localScale = originalRootScale * highlightScaleMultiplier;
         }
 
         ApplyMaterialHighlight(activeVisual, true);
@@ -114,13 +113,13 @@ public class GrassCuttable : MonoBehaviour
 
     private void ClearHighlight()
     {
+        if (useScaleHighlight)
+        {
+            transform.localScale = originalRootScale;
+        }
+
         if (highlightedVisual != null)
         {
-            if (useScaleHighlight)
-            {
-                highlightedVisual.transform.localScale = highlightedVisualOriginalScale;
-            }
-
             ApplyMaterialHighlight(highlightedVisual, false);
         }
 
