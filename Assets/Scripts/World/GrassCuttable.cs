@@ -9,12 +9,17 @@ public class GrassCuttable : MonoBehaviour
     [SerializeField] private bool chooseRandomVariant = true;
 
     [Header("Highlight")]
-    [SerializeField] private Color highlightColor = new Color(1f, 0.9f, 0.35f, 1f);
-    [SerializeField, Range(0f, 3f)] private float highlightIntensity = 1.35f;
+    [SerializeField] private bool useScaleHighlight = true;
+    [SerializeField, Range(1f, 1.3f)] private float highlightScaleMultiplier = 1.08f;
+    [SerializeField] private Color highlightColor = new Color(1f, 0.92f, 0.45f, 1f);
+    [SerializeField, Range(0f, 3f)] private float highlightIntensity = 1.25f;
 
     private bool isCut;
     private int activeVariantIndex;
     private bool isHighlighted;
+
+    private GameObject highlightedVisual;
+    private Vector3 highlightedVisualOriginalScale;
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int LegacyColorId = Shader.PropertyToID("_Color");
@@ -34,14 +39,13 @@ public class GrassCuttable : MonoBehaviour
 
     private void OnDisable()
     {
-        if (isHighlighted)
-        {
-            SetHighlighted(false);
-        }
+        ClearHighlight();
     }
 
     private void SetupVisuals(bool notify)
     {
+        ClearHighlight();
+
         if (fullGrassVariants == null || fullGrassVariants.Length == 0)
         {
             Debug.LogWarning("GrassCuttable on " + name + " has no full grass variants assigned.", this);
@@ -66,7 +70,6 @@ public class GrassCuttable : MonoBehaviour
         }
 
         isCut = false;
-        SetHighlighted(false);
 
         if (notify)
         {
@@ -76,33 +79,78 @@ public class GrassCuttable : MonoBehaviour
 
     public void SetHighlighted(bool highlighted)
     {
-        if (isHighlighted == highlighted)
-            return;
+        if (highlighted)
+        {
+            ApplyHighlight();
+        }
+        else
+        {
+            ClearHighlight();
+        }
+    }
 
-        isHighlighted = highlighted;
+    private void ApplyHighlight()
+    {
+        if (isCut || isHighlighted)
+            return;
 
         GameObject activeVisual = GetActiveVisual();
 
         if (activeVisual == null)
             return;
 
-        Renderer[] renderers = activeVisual.GetComponentsInChildren<Renderer>(true);
+        isHighlighted = true;
+        highlightedVisual = activeVisual;
+        highlightedVisualOriginalScale = activeVisual.transform.localScale;
+
+        if (useScaleHighlight)
+        {
+            activeVisual.transform.localScale =
+                highlightedVisualOriginalScale * highlightScaleMultiplier;
+        }
+
+        ApplyMaterialHighlight(activeVisual, true);
+    }
+
+    private void ClearHighlight()
+    {
+        if (highlightedVisual != null)
+        {
+            if (useScaleHighlight)
+            {
+                highlightedVisual.transform.localScale = highlightedVisualOriginalScale;
+            }
+
+            ApplyMaterialHighlight(highlightedVisual, false);
+        }
+
+        highlightedVisual = null;
+        isHighlighted = false;
+    }
+
+    private void ApplyMaterialHighlight(GameObject visual, bool highlighted)
+    {
+        if (visual == null)
+            return;
+
+        if (propertyBlock == null)
+        {
+            propertyBlock = new MaterialPropertyBlock();
+        }
+
+        Renderer[] renderers = visual.GetComponentsInChildren<Renderer>(true);
 
         foreach (Renderer renderer in renderers)
         {
             if (renderer == null)
                 continue;
 
-            if (propertyBlock == null)
-            {
-                propertyBlock = new MaterialPropertyBlock();
-            }
-
             renderer.GetPropertyBlock(propertyBlock);
 
             if (highlighted)
             {
                 Color glow = highlightColor * highlightIntensity;
+
                 propertyBlock.SetColor(BaseColorId, highlightColor);
                 propertyBlock.SetColor(LegacyColorId, highlightColor);
                 propertyBlock.SetColor(EmissionColorId, glow);
@@ -138,7 +186,7 @@ public class GrassCuttable : MonoBehaviour
         if (isCut)
             return false;
 
-        SetHighlighted(false);
+        ClearHighlight();
         isCut = true;
 
         if (fullGrassVariants != null)
