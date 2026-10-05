@@ -7,11 +7,18 @@ public class PlayerItemInventory : MonoBehaviour
 
     [Header("First Person")]
     [SerializeField] private GameObject gardenShearsObject;
+    [SerializeField] private Animator armsAnimator;
+    [SerializeField] private string shearsCutTrigger = "Cut";
 
     public bool HasGardenShears => hasGardenShears;
 
     private void Awake()
     {
+        if (armsAnimator == null)
+        {
+            armsAnimator = GetComponentInChildren<Animator>(true);
+        }
+
         RefreshFirstPersonItems();
     }
 
@@ -19,6 +26,21 @@ public class PlayerItemInventory : MonoBehaviour
     {
         hasGardenShears = true;
         RefreshFirstPersonItems();
+    }
+
+    public bool PlayGardenShearsCut()
+    {
+        if (!hasGardenShears)
+            return false;
+
+        ShowGardenShears();
+
+        if (armsAnimator == null)
+            return false;
+
+        armsAnimator.ResetTrigger(shearsCutTrigger);
+        armsAnimator.SetTrigger(shearsCutTrigger);
+        return true;
     }
 
     public void HideGardenShears()
