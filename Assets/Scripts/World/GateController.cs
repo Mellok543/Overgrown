@@ -45,7 +45,11 @@ public class GateController : MonoBehaviour
 
         if (isLookedAt && Input.GetKeyDown(interactKey))
         {
-            if (gateVines == null || gateVines.IsCleared)
+            if (gateVines != null && !gateVines.IsCleared)
+            {
+                gateVines.TryCutVines();
+            }
+            else
             {
                 isOpen = !isOpen;
             }
