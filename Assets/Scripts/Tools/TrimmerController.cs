@@ -17,6 +17,12 @@ public class TrimmerController : MonoBehaviour
 
     [Header("Visual")]
     [SerializeField] private float headSpinSpeed = 1200f;
+    [Tooltip("Arms Animator (FP_Trimmer.controller); found from the trimmer head if left empty.")]
+    [SerializeField] private Animator armsAnimator;
+    [SerializeField] private string workingParameter = "Working";
+
+    /// <summary>Plays the work animation + head spin without the mouse button (tests / scripted use). Does not cut.</summary>
+    public bool ForceWorkingVisual { get; set; }
 
     private float nextCutTime;
 
@@ -40,10 +46,42 @@ public class TrimmerController : MonoBehaviour
         {
             inventory = FindFirstObjectByType<GrassInventory>();
         }
+
+        if (armsAnimator == null && trimmerHead != null)
+        {
+            armsAnimator = trimmerHead.GetComponentInParent<Animator>();
+        }
+    }
+
+    private void OnDisable()
+    {
+        SetWorkingVisual(false);
+    }
+
+    private void SetWorkingVisual(bool working)
+    {
+        if (armsAnimator == null || armsAnimator.runtimeAnimatorController == null)
+            return;
+
+        foreach (AnimatorControllerParameter p in armsAnimator.parameters)
+        {
+            if (p.name == workingParameter && p.type == AnimatorControllerParameterType.Bool)
+            {
+                armsAnimator.SetBool(workingParameter, working);
+                return;
+            }
+        }
     }
 
     private void Update()
     {
+        SetWorkingVisual(Input.GetMouseButton(0) || ForceWorkingVisual);
+
+        if (ForceWorkingVisual && trimmerHead != null && !Input.GetMouseButton(0))
+        {
+            trimmerHead.Rotate(Vector3.up, headSpinSpeed * Time.deltaTime, Space.Self);
+        }
+
         if (!Input.GetMouseButton(0))
             return;
 

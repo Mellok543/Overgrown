@@ -73,6 +73,8 @@ ModelImporter:
         weight: 0
       - path: Player_Arms_FP/FP_Root
         weight: 1
+      - path: Player_Arms_FP/FP_Root/Tool_Mower
+        weight: 1
       - path: Player_Arms_FP/FP_Root/UpperArm_L
         weight: 1
       - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
@@ -150,6 +152,10 @@ ModelImporter:
       - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
         weight: 1
       - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Tool_Sickle
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Tool_Trimmer
         weight: 1
       maskType: 1
       maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}

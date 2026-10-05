@@ -161,6 +161,131 @@ def shears_hands(phi, off=Vector()):
     sw = shears_world(phi, off)
     return fist_on_handle(*sw["A"], False), fist_on_handle(*sw["B"], True)
 
+
+# ================================================================ tools: sickle / trimmer / mower (rigid hand attachment)
+# Each tool rides on a socket bone (Tool_Sickle / Tool_Trimmer under Hand_R, Tool_Mower under FP_Root).
+# In Unity the existing tool object is parented to its socket with an identity local transform.
+# Hands are attached rigidly: their pose is stored in the tool's own space and re-applied every frame,
+# so a hand can never slide along its handle.
+EYE = 1.7                                   # game eye height above the ground
+ARMS_OFF = Vector((0, 0.22, 0.2))           # camera in FP_Root space for camera-locked tools (Unity arms localPosition (0,-0.2,0.22), 8 deg tilt)
+CAM_LEVEL = Vector((0, -0.15, 0.0))       # camera in FP_Root space for levelled tools (trimmer, mower): shoulders stay behind the camera
+                                            # -> FPToolGroundFollow puts the arms at camera + yaw * (0, 0, -0.15) (Unity)
+GROUND_Z = CAM_LEVEL.z - EYE                # ground height in FP_Root space for the levelled tools
+SOCKET_BASIS = Matrix(((1, 0, 0), (0, 0, -1), (0, 1, 0)))   # bone Y up, Z back -> identity orientation in Unity
+
+def frame_fu(f, u):
+    """Tool rotation from a 'forward' (blade / local -Y) and an 'up' (handle / local +Z) direction."""
+    Z = Vector(u).normalized()
+    Y = -(Vector(f) - Z * Vector(f).dot(Z)).normalized()
+    return Matrix((Y.cross(Z), Y, Z)).transposed()
+
+def attach(hp, P0, R0):
+    Ri = R0.transposed()
+    return (Ri @ (hp.W - P0), Ri @ hp.F, Ri @ hp.U, hp.curl, hp.thumb)
+
+def detach(loc, P, R, curl=None, thumb=None):
+    w, f, u, c, t = loc
+    return HP(P + R @ w, R @ f, R @ u, c if curl is None else curl, t if thumb is None else thumb)
+
+def fist_rigid(P, a, U_guess, is_left, curl=0.92, thumb=0.6):
+    U = (U_guess - a * U_guess.dot(a)).normalized()
+    F = (U.cross(a) if is_left else a.cross(U)).normalized()
+    return HP(wrist_for_grip(P, F, U), F, U, curl=curl, thumb=thumb)
+
+def ease(x):
+    x = max(0.0, min(1.0, x))
+    return x * x * (3 - 2 * x)
+
+def ease5(x):
+    x = max(0.0, min(1.0, x))
+    return x * x * x * (x * (6 * x - 15) + 10)
+
+def qcont(q, ref):
+    return -q if q.dot(ref) < 0 else q
+
+# ---------------------------------------------------------------- sickle (right fist on the wooden handle, model axis +Z)
+SK_P0 = Vector((-0.2, -0.33, -0.05))
+SK_R0 = frame_fu((0.2, -0.7, -0.45), (-0.35, -0.55, 0.8))
+def sickle_fist(P, R):
+    a = R @ Vector((0, 0, 1))
+    U = -(R @ Vector((1, 0, 0))) - (R @ Vector((0, 1, 0))) * 0.45
+    return fist_rigid(P, a, U, False, curl=0.92, thumb=0.6)
+SK_RH = attach(sickle_fist(SK_P0, SK_R0), SK_P0, SK_R0)
+SK_LH = HP((0.2, -0.37, -0.15), (-0.1, -1, -0.45), (1, 0.05, 0.3), curl=0.35)     # relaxed, lower left, holds nothing
+def sk_key(dp, f, u):
+    return (SK_P0 + Vector(dp), frame_fu(f, u))
+SK_WIND = sk_key((-0.05, 0.05, 0.03), (-0.25, -0.8, -0.35), (-0.7, -0.3, 0.8))   # small draw back / out
+SK_MID = sk_key((0.12, -0.14, -0.03), (0.9, -0.2, -0.35), (0.25, -1, 0.15))     # blade flat, sweeping right -> left, low in view
+SK_END = sk_key((0.32, -0.08, -0.04), (0.75, 0.55, -0.3), (0.65, -0.75, 0.1))
+
+def sickle_swing(f):
+    """Tool (P, R) at frame f of the 11-frame swing (30 fps, 0.367 s)."""
+    q0 = SK_R0.to_quaternion()
+    qw = qcont(SK_WIND[1].to_quaternion(), q0)
+    qm = qcont(SK_MID[1].to_quaternion(), qw)
+    qe = qcont(SK_END[1].to_quaternion(), qm)
+    if f <= 2.5:                                            # 0.00-0.08 s anticipation
+        s = ease(f / 2.5)
+        return SK_P0.lerp(SK_WIND[0], s), q0.slerp(qw, s).to_matrix()
+    if f <= 7.5:                                            # 0.08-0.25 s main pass along an arc
+        s = ease5((f - 2.5) / 5.0)
+        ctrl = SK_MID[0] * 2 - (SK_WIND[0] + SK_END[0]) * 0.5
+        P = SK_WIND[0] * (1 - s) ** 2 + ctrl * 2 * (1 - s) * s + SK_END[0] * s * s
+        return P, qw.slerp(qm, s).slerp(qm.slerp(qe, s), s).to_matrix()
+    s = ease((f - 7.5) / 3.5)                               # 0.25-0.37 s settle back into idle
+    return SK_END[0].lerp(SK_P0, s), qe.slerp(qcont(q0, qe), s).to_matrix()
+
+# ---------------------------------------------------------------- trimmer (right fist on the rear grip, left on the D-handle)
+_c38, _s38 = math.cos(math.radians(38)), math.sin(math.radians(38))
+TRM_D = Vector((0, -_c38, -_s38))                           # shaft direction in model space
+TRM_BAR = TRM_D * 0.36 + Vector((0, 0, 0.19))               # D-handle top bar centre (model space)
+TRM_HEAD_BOTTOM = Vector((0, -_c38 * 0.95 - 0.035, -_s38 * 0.95 - 0.115 - 0.036))
+# camera-locked like the sickle (hands visible at a normal gaze); FPToolGroundFollow only lifts it if the head would dip into the ground
+TRM_YAW = math.radians(20)                                  # shaft runs forward and towards the lower left
+_trm_base = Matrix.Rotation(TRM_YAW, 3, 'Z') @ Matrix.Rotation(math.radians(-10), 3, 'X')   # 10 deg shallower than modelled
+TRM_R0 = Matrix.Rotation(math.radians(-60), 3, _trm_base @ TRM_D) @ _trm_base           # rolled: battery faces out to the right
+TRM_P0 = Vector((-0.15, -0.40, -0.05))                      # hands low in frame, shaft + head visible, battery off-centre
+def trimmer_hands(P, R):
+    D = R @ TRM_D
+    u = Vector((-0.5, 0, 1)); u = (u - D * u.dot(D)).normalized()
+    f = D.cross(u).normalized()
+    rh = HP(wrist_for_grip(P, f, u), f, u, curl=0.88, thumb=0.6)
+    ax = R @ Vector((1, 0, 0))
+    u = Vector((0, 0.3, 1)); u = (u - ax * u.dot(ax)).normalized()
+    f = ax.cross(u).normalized()
+    lh = HP(wrist_for_grip(P + R @ TRM_BAR, f, u), f, u, curl=0.88, thumb=0.6)
+    return rh, lh
+_tr, _tl = trimmer_hands(TRM_P0, TRM_R0)
+TRM_RH, TRM_LH = attach(_tr, TRM_P0, TRM_R0), attach(_tl, TRM_P0, TRM_R0)
+TRM_PIVOT = TRM_P0 + TRM_R0 @ TRM_D * 0.18                  # sway pivot between the hands
+def trimmer_pose(yaw_delta, off=Vector(), roll=0.0):
+    Rd = Matrix.Rotation(yaw_delta, 3, 'Z') @ Matrix.Rotation(roll, 3, (TRM_R0 @ TRM_D))
+    return TRM_PIVOT + Rd @ (TRM_P0 - TRM_PIVOT) + off, Rd @ TRM_R0
+
+# ---------------------------------------------------------------- mower (both hands overhand on the T-bar, body on the ground)
+MW_BAR_LOCAL = Vector((0, 0.76, 1.0))
+MW_P0 = Vector((0, -0.42 - 0.76, GROUND_Z))                 # mower root = ground contact under the deck
+MW_R0 = Matrix.Identity(3)
+def mower_hands(P, R):
+    out = []
+    for sx, is_left in ((-1, False), (1, True)):
+        g = P + R @ (MW_BAR_LOCAL + Vector((sx * 0.13, 0, 0)))
+        ax = R @ Vector((1, 0, 0))
+        u = R @ Vector((0, 0.25, 1)); u = (u - ax * u.dot(ax)).normalized()
+        f = ax.cross(u).normalized()
+        if f.y > 0:
+            f = -f
+        out.append(HP(wrist_for_grip(g, f, u), f, u, curl=0.85, thumb=0.55))
+    return out
+_mr, _ml = mower_hands(MW_P0, MW_R0)
+MW_RH, MW_LH = attach(_mr, MW_P0, MW_R0), attach(_ml, MW_P0, MW_R0)
+def mower_pose(dy=0.0, dz=0.0, roll=0.0):
+    return MW_P0 + Vector((0, dy, dz)), Matrix.Rotation(roll, 3, 'Y') @ MW_R0
+
+SOCKETS = {"Tool_Sickle": ("Hand_R", SK_P0, SK_R0), "Tool_Trimmer": ("Hand_R", TRM_P0, TRM_R0),
+           "Tool_Mower": ("FP_Root", MW_P0, MW_R0)}
+
 # ================================================================ rig (rest = idle)
 bone_defs, parents, connected = {}, {}, set()
 bone_defs["FP_Root"] = (Vector((0, 0, 0)), Vector((0, -0.1, 0)), Vector((0, 0, 1)))
@@ -189,6 +314,9 @@ for s, hp in (("_R", IDLE_R), ("_L", IDLE_L)):
 # shears bones: Y axis = pivot (plate normal), so opening/closing is a rotation about local Y
 for name, par in (("Shears_Root", "Hand_R"), ("Shears_A", "Shears_Root"), ("Shears_B", "Shears_Root")):
     bone_defs[name] = (SH_P0.copy(), SH_P0 + SZ * 0.05, SX)
+    parents[name] = par
+for name, (par, P0, R0) in SOCKETS.items():
+    bone_defs[name] = (P0.copy(), P0 + Vector((0, 0, 0.1)), Vector((0, -1, 0)))
     parents[name] = par
 arm = build_armature(scene, "Player_Arms_FP", bone_defs, parents, connected)
 bdefs = {k: (v[0], v[1]) for k, v in bone_defs.items()}
@@ -371,13 +499,31 @@ def pose_shears(state):
     pb["Shears_B"].rotation_quaternion = Quaternion((0, 1, 0), -phi)
     pb["Shears_A"].location = (0, 0, 0); pb["Shears_B"].location = (0, 0, 0)
 
-def key_pose(frame, R, L, shears=None):
+def pose_sockets(tools):
+    for name in SOCKETS:
+        if tools and name in tools:
+            P, R = tools[name]
+            M = (R @ SOCKET_BASIS).to_4x4()
+            M.translation = P
+            pb[name].matrix = M
+            bpy.context.view_layer.update()
+        else:
+            pb[name].rotation_quaternion = (1, 0, 0, 0)
+            pb[name].location = (0, 0, 0)
+
+REACH_WARN = []
+def key_pose(frame, R, L, shears=None, tools=None):
     if shears is not None:
         R, L = shears_hands(*shears)
+    for side, hp in (("_R", R), ("_L", L)):
+        if (hp.W - SHOULDER[side]).length > L_UP + L_LO - 1e-3:
+            REACH_WARN.append((frame, side, round((hp.W - SHOULDER[side]).length, 3)))
     apply_pose("_R", R)
     apply_pose("_L", L)
     bpy.context.view_layer.update()
     pose_shears(shears)
+    bpy.context.view_layer.update()
+    pose_sockets(tools)
     bpy.context.view_layer.update()
     for p in pb:
         if p.name == "FP_Root":
@@ -389,7 +535,7 @@ def key_pose(frame, R, L, shears=None):
             p.rotation_quaternion = q
         last_q[p.name] = q
         p.keyframe_insert("rotation_quaternion", frame=frame)
-        if p.name.startswith(("UpperArm", "Shears")):
+        if p.name.startswith(("UpperArm", "Shears", "Tool_")):
             p.keyframe_insert("location", frame=frame)
 
 def clip(name, keys):
@@ -446,7 +592,56 @@ for f in range(0, 61, 2):
     shears_idle.append((f, None, None, (o_ + math.radians(0.6) * b, Vector((0, -0.001 * b, -0.003 * b)))))
 shears_cut = [(f, None, None, (smooth_track(CUT_PHI, f), SX * smooth_track(CUT_PUSH, f))) for f in range(0, 16)]
 clips += [("FP_Shears_Idle", shears_idle), ("FP_Shears_Cut", shears_cut)]
+
+def breathe(f, period=60):
+    return 0.5 - 0.5 * math.cos(math.tau * f / period)
+
+def sickle_keys(f, P, R, lh):
+    return (f, detach(SK_RH, P, R), lh, None, {"Tool_Sickle": (P, R)})
+sickle_idle = []
+for f in range(0, 61, 2):
+    b = breathe(f)
+    P = SK_P0 + Vector((0, -0.002 * b, -0.005 * b))
+    R = Matrix.Rotation(math.radians(0.8) * b, 3, 'X') @ SK_R0
+    sickle_idle.append(sickle_keys(f, P, R, SK_LH.moved((0, -0.002 * b, -0.006 * b))))
+sickle_swing_keys = []
+for f in range(0, 12):
+    P, R = sickle_swing(f)
+    push = math.sin(math.pi * min(1.0, f / 11.0))           # the free hand counter-moves a little
+    sickle_swing_keys.append(sickle_keys(f, P, R, SK_LH.moved((0.04 * push, 0.02 * push, -0.05 * push))))   # free hand ducks out of the arc
+
+def trimmer_keys(f, P, R):
+    return (f, detach(TRM_RH, P, R), detach(TRM_LH, P, R), None, {"Tool_Trimmer": (P, R)})
+trimmer_idle = []
+for f in range(0, 61, 2):
+    b = breathe(f)
+    P, R = trimmer_pose(math.radians(1.2) * math.sin(math.tau * f / 60), Vector((0, 0, 0.004 * b)))
+    trimmer_idle.append(trimmer_keys(f, P, R))
+trimmer_work = []
+for f in range(0, 33):                                      # 32 frames = 1.067 s loop
+    sway = math.radians(10) * math.sin(math.tau * f / 32)
+    vib = 0.0015 * (1 + math.sin(math.tau * f / 4))         # engine buzz, never pushes the head down
+    P, R = trimmer_pose(sway, Vector((0, 0, vib)), math.radians(0.4) * math.sin(math.tau * f / 4 + 1.0))
+    trimmer_work.append(trimmer_keys(f, P, R))
+
+def mower_keys(f, P, R):
+    return (f, detach(MW_RH, P, R), detach(MW_LH, P, R), None, {"Tool_Mower": (P, R)})
+mower_idle = []
+for f in range(0, 61, 2):
+    P, R = mower_pose(dy=-0.003 * breathe(f))
+    mower_idle.append(mower_keys(f, P, R))
+mower_push = []
+for f in range(0, 29):                                      # 28 frames = 0.933 s loop
+    P, R = mower_pose(dy=-0.015 * math.sin(math.tau * f / 28),          # arms push forward / ease back
+                      dz=0.0012 * (1 + math.sin(math.tau * f / 4)),     # engine vibration, only upwards
+                      roll=math.radians(0.5) * math.sin(math.tau * f / 14))
+    mower_push.append(mower_keys(f, P, R))
+
+clips += [("FP_Sickle_Idle", sickle_idle), ("FP_Sickle_Swing", sickle_swing_keys),
+          ("FP_Trimmer_Idle", trimmer_idle), ("FP_Trimmer_Work", trimmer_work),
+          ("FP_Mower_Idle", mower_idle), ("FP_Mower_Push", mower_push)]
 actions = {name: clip(name, keys) for name, keys in clips}
+print("REACH warnings (hand target beyond arm length):", len(REACH_WARN), REACH_WARN[:10])
 arm.animation_data.action = actions["FP_Idle"]
 
 def unity(v):
@@ -546,6 +741,67 @@ for name, frame in (("FP_Shears_Idle", 0), ("FP_Shears_Cut", 8)):
         aim(cam, loc, GRIPS_MID + Vector((0, -0.05, 0.03)))
         scene.render.filepath = os.path.join(HERE, f"fpq_close_{name}_f{frame:02d}_{tag}.png")
         bpy.ops.render.render(write_still=True)
+# ---------------------------------------------------------------- tool QA: the game camera (arms offset (0,-0.2,0.22)), FOV 77
+def tool_from_socket(socket):
+    M = arm.matrix_world @ pb[socket].matrix @ SOCKET_BASIS.inverted().to_4x4()
+    return M
+def show_only(key):
+    for k, t in tools.items():
+        if t is None:
+            continue
+        vis = (k == key)
+        t.hide_render = not vis
+        for c in t.children_recursive:
+            c.hide_render = not vis
+shob.hide_render = True
+cam.data.sensor_fit = 'VERTICAL'
+cam.data.angle_y = math.radians(77)
+cam.data.clip_start = 0.3                                   # same near clip as the game camera
+scene.render.resolution_x, scene.render.resolution_y = 1280, 720
+TOOL_SHOTS = [
+    ("FP_Sickle_Idle", 0, "sickle", "Tool_Sickle", 0, False), ("FP_Sickle_Swing", 2, "sickle", "Tool_Sickle", 0, False),
+    ("FP_Sickle_Swing", 5, "sickle", "Tool_Sickle", 0, False), ("FP_Sickle_Swing", 6, "sickle", "Tool_Sickle", 0, False),
+    ("FP_Sickle_Swing", 8, "sickle", "Tool_Sickle", 0, False), ("FP_Sickle_Swing", 6, "sickle", "Tool_Sickle", -30, False),
+    ("FP_Trimmer_Idle", 0, "trimmer", "Tool_Trimmer", 0, False), ("FP_Trimmer_Work", 0, "trimmer", "Tool_Trimmer", 0, False),
+    ("FP_Trimmer_Work", 8, "trimmer", "Tool_Trimmer", 0, False), ("FP_Trimmer_Work", 24, "trimmer", "Tool_Trimmer", 0, False),
+    ("FP_Mower_Idle", 0, "mower", "Tool_Mower", -25, True), ("FP_Mower_Idle", 0, "mower", "Tool_Mower", -45, True),
+    ("FP_Mower_Push", 7, "mower", "Tool_Mower", -45, True),
+]
+for name, frame, key, socket, pitch, levelled in TOOL_SHOTS:
+    arm.animation_data.action = actions[name]
+    scene.frame_set(frame)
+    show_only(key)
+    if tools.get(key) is not None:
+        tools[key].matrix_world = tool_from_socket(socket)
+    ground.hide_render = not levelled
+    ground.location = (0, 0, GROUND_Z)
+    cam.location = CAM_LEVEL if levelled else ARMS_OFF
+    # camera-locked tools: the arms hang 8 deg pitched down under the camera; levelled tools: yaw-only arms
+    cam.rotation_euler = (math.radians(90 + pitch + (0 if levelled else 8)), 0, math.radians(180))
+    scene.render.filepath = os.path.join(HERE, f"fpt_{name}_f{frame:02d}_p{abs(pitch)}.png")
+    bpy.ops.render.render(write_still=True)
+# ground clearance of the trimmer head / mower deck through the loops (model-space helpers -> FP space)
+for name in ("FP_Trimmer_Idle", "FP_Trimmer_Work"):          # camera-locked: head height above flat ground per camera pitch
+    arm.animation_data.action = actions[name]
+    f0, f1 = [int(x) for x in actions[name].frame_range]
+    out = {}
+    for pitch in (0, 15, 30, 45):
+        hs = []
+        for f in range(f0, f1 + 1):
+            scene.frame_set(f)
+            q = tool_from_socket("Tool_Trimmer") @ TRM_HEAD_BOTTOM - ARMS_OFF
+            hs.append(EYE + (Matrix.Rotation(math.radians(8 + pitch), 3, 'X') @ q).z)
+        out[pitch] = round(min(hs) * 100, 1)
+    print(f"GROUND {name}: head above flat ground (cm) by camera pitch down {out}")
+for name, key, socket, local in (("FP_Mower_Idle", "mower", "Tool_Mower", Vector((0, 0, 0))),
+                                 ("FP_Mower_Push", "mower", "Tool_Mower", Vector((0, 0, 0)))):
+    arm.animation_data.action = actions[name]
+    zs = []
+    f0, f1 = [int(x) for x in actions[name].frame_range]
+    for f in range(f0, f1 + 1):
+        scene.frame_set(f)
+        zs.append((tool_from_socket(socket) @ local).z - GROUND_Z)
+    print(f"GROUND {name}: lowest point above ground min={min(zs) * 100:.1f} cm max={max(zs) * 100:.1f} cm")
 print("RENDERED")
 
 # ================================================================ export
@@ -562,7 +818,10 @@ export_yup(scene, objs, os.path.join(OUT, "Player_Arms_FP.fbx"), anim=True, conv
 # one clip per file (take named after the scene, baked over the scene frame range)
 ANIM_OUT = os.path.join(OUT, "Animations")
 os.makedirs(ANIM_OUT, exist_ok=True)
-for name, (f0, f1) in (("FP_Shears_Idle", (0, 60)), ("FP_Shears_Cut", (0, 15))):
+for name, (f0, f1) in (("FP_Shears_Idle", (0, 60)), ("FP_Shears_Cut", (0, 15)),
+                       ("FP_Sickle_Idle", (0, 60)), ("FP_Sickle_Swing", (0, 11)),
+                       ("FP_Trimmer_Idle", (0, 60)), ("FP_Trimmer_Work", (0, 32)),
+                       ("FP_Mower_Idle", (0, 60)), ("FP_Mower_Push", (0, 28))):
     arm.animation_data.action = actions[name]
     scene.name = name
     scene.frame_start, scene.frame_end = f0, f1

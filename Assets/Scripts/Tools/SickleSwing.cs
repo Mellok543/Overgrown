@@ -11,6 +11,11 @@ public class SickleSwing : MonoBehaviour
     [Header("References")]
     [SerializeField] private GrassCutter grassCutter;
 
+    [Header("First Person Animation")]
+    [Tooltip("Arms Animator with a Swing trigger (FP_Sickle.controller). When present, the arms animate the swing instead of this transform moving.")]
+    [SerializeField] private Animator armsAnimator;
+    [SerializeField] private string swingTrigger = "Swing";
+
     [Header("Swing Rotation")]
     [SerializeField] private float swingAngle = 70f;
 
@@ -45,17 +50,56 @@ public class SickleSwing : MonoBehaviour
         {
             grassCutter = GetComponentInParent<GrassCutter>();
         }
+
+        if (armsAnimator == null)
+        {
+            armsAnimator = GetComponentInParent<Animator>();
+        }
+    }
+
+    private void OnDisable()
+    {
+        // switching tools mid-swing must not leave the coroutine state behind
+        StopAllCoroutines();
+        isSwinging = false;
+        if (!UsesArmsAnimation)
+        {
+            transform.localRotation = startRotation;
+            transform.localPosition = startPosition;
+        }
+    }
+
+    private bool UsesArmsAnimation
+    {
+        get
+        {
+            if (armsAnimator == null || armsAnimator.runtimeAnimatorController == null)
+                return false;
+
+            foreach (AnimatorControllerParameter p in armsAnimator.parameters)
+            {
+                if (p.name == swingTrigger && p.type == AnimatorControllerParameterType.Trigger)
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    // Same rules as the mouse button; public so other scripts / tests can start a swing.
+    public bool TrySwing()
+    {
+        if (isSwinging || Time.time < nextSwingTime || !isActiveAndEnabled)
+            return false;
+
+        StartCoroutine(Swing());
+        return true;
     }
 
     private void Update()
     {
-        if (
-            Input.GetMouseButtonDown(0) &&
-            !isSwinging &&
-            Time.time >= nextSwingTime
-        )
+        if (Input.GetMouseButtonDown(0))
         {
-            StartCoroutine(Swing());
+            TrySwing();
         }
     }
 
@@ -74,6 +118,29 @@ public class SickleSwing : MonoBehaviour
         }
 
         nextSwingTime = Time.time + cooldown;
+
+        if (UsesArmsAnimation)
+        {
+            // visuals come from FP_Sickle_Swing; cut timing and cooldown are unchanged
+            armsAnimator.ResetTrigger(swingTrigger);
+            armsAnimator.SetTrigger(swingTrigger);
+
+            yield return new WaitForSeconds(swingDuration);
+
+            if (grassCutter != null)
+            {
+                grassCutter.CutGrass();
+
+                if (audioSource != null && cutSound != null)
+                {
+                    audioSource.PlayOneShot(cutSound);
+                }
+            }
+
+            yield return new WaitForSeconds(returnDuration);
+            isSwinging = false;
+            yield break;
+        }
 
         Quaternion targetRotation =
             startRotation *

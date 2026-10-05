@@ -28,6 +28,15 @@ public class ToolInventory : MonoBehaviour
     [SerializeField] private GameObject mowerObject;
     [SerializeField] private MowerController mowerController;
 
+    [Header("First Person Animation")]
+    [SerializeField] private Animator armsAnimator;
+    [SerializeField] private RuntimeAnimatorController sickleArmsController;
+    [SerializeField] private RuntimeAnimatorController trimmerArmsController;
+    [SerializeField] private RuntimeAnimatorController mowerArmsController;
+    [SerializeField] private FPToolGroundFollow groundFollow;
+    [SerializeField] private Transform trimmerGroundPoint;
+    [SerializeField] private Transform mowerGroundPoint;
+
     [Header("Input")]
     [SerializeField] private KeyCode handsKey = KeyCode.Alpha1;
     [SerializeField] private KeyCode sickleKey = KeyCode.Alpha2;
@@ -217,8 +226,38 @@ public class ToolInventory : MonoBehaviour
         if (mowerObject != null)
             mowerObject.SetActive(mowerActive);
 
+        // shears first: unequipping them resets the arms; the tool controller is applied afterwards
         if (playerItems != null)
             playerItems.SetGardenShearsEquipped(shearsActive);
+
+        ApplyArmsAnimation(sickleActive, trimmerActive, mowerActive);
+    }
+
+    private void ApplyArmsAnimation(bool sickleActive, bool trimmerActive, bool mowerActive)
+    {
+        RuntimeAnimatorController controller =
+            sickleActive ? sickleArmsController :
+            trimmerActive ? trimmerArmsController :
+            mowerActive ? mowerArmsController : null;
+
+        if (armsAnimator != null && controller != null)
+        {
+            // fresh controller + Rebind: no pose of the previous tool survives, the new Idle applies at once
+            armsAnimator.runtimeAnimatorController = controller;
+            armsAnimator.enabled = true;
+            armsAnimator.Rebind();
+            armsAnimator.Update(0f);
+        }
+
+        if (groundFollow != null)
+        {
+            if (mowerActive)
+                groundFollow.SetMode(FPToolGroundFollow.Mode.Level, mowerGroundPoint);
+            else if (trimmerActive)
+                groundFollow.SetMode(FPToolGroundFollow.Mode.Lift, trimmerGroundPoint);
+            else
+                groundFollow.SetMode(FPToolGroundFollow.Mode.Off, null);
+        }
     }
 
     private void OnGUI()

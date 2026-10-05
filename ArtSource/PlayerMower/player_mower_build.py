@@ -378,12 +378,19 @@ print("RENDERED")
 # conversion, then mark the file Y-up. Keeps every node at rotation 0 / scale 1 in Unity.
 for o in bpy.context.selected_objects:
     o.select_set(False)
+# invisible ground-contact helper for Unity ground following (raycast origin); not rendered
+gp = bpy.data.objects.new("MowerGroundPoint", None)
+scene.collection.objects.link(gp)
+gp.empty_display_size = 0.05
+gp.parent = root
+gp.matrix_parent_inverse = Matrix.Identity(4)
+gp.location = Vector((0, 0, 0))
 R = Matrix.Rotation(-math.pi / 2, 4, 'X')
 for ob in mesh_objs:
     ob.data.transform(R)
-for ob in [root] + mesh_objs:
+for ob in [root, gp] + mesh_objs:
     ob.location = R @ ob.location
-for o in [root] + mesh_objs:
+for o in [root, gp] + mesh_objs:
     o.select_set(True)
 fbx_path = os.path.join(OUT, NAME + ".fbx")
 bpy.ops.export_scene.fbx(

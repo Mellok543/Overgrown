@@ -20,7 +20,16 @@ public static class ShearsAnimationSetup
     private const string ReportPath = "Logs/FP_Shears_SetupReport.txt";
 
     private static readonly string[] LoopingClips =
-        { "FP_Idle", "FP_SickleHold", "FP_TrimmerHold", "FP_MowerHold", "FP_Shears_Idle" };
+        { "FP_Idle", "FP_SickleHold", "FP_TrimmerHold", "FP_MowerHold", "FP_Shears_Idle",
+          "FP_Sickle_Idle", "FP_Trimmer_Idle", "FP_Trimmer_Work", "FP_Mower_Idle", "FP_Mower_Push" };
+
+    // per-tool clip files (one take each) handled by the same import rules
+    internal static readonly string[] ToolClipPaths =
+    {
+        "Assets/Art/Models/Player/Animations/FP_Sickle_Idle.fbx", "Assets/Art/Models/Player/Animations/FP_Sickle_Swing.fbx",
+        "Assets/Art/Models/Player/Animations/FP_Trimmer_Idle.fbx", "Assets/Art/Models/Player/Animations/FP_Trimmer_Work.fbx",
+        "Assets/Art/Models/Player/Animations/FP_Mower_Idle.fbx", "Assets/Art/Models/Player/Animations/FP_Mower_Push.fbx",
+    };
 
     [InitializeOnLoadMethod]
     private static void AutoRun()
@@ -62,6 +71,11 @@ public static class ShearsAnimationSetup
 
         ConfigureImporter(IdlePath, mask, armsAvatar, report);
         ConfigureImporter(CutPath, mask, armsAvatar, report);
+        foreach (string toolClip in ToolClipPaths)
+        {
+            if (File.Exists(toolClip))
+                ConfigureImporter(toolClip, mask, armsAvatar, report);
+        }
 
         AnimationClip idle = LoadClip(IdlePath);
         AnimationClip cut = LoadClip(CutPath);
@@ -110,7 +124,7 @@ public static class ShearsAnimationSetup
         return mask;
     }
 
-    private static void ConfigureImporter(string path, AvatarMask mask, Avatar sourceAvatar, StringBuilder report)
+    internal static void ConfigureImporter(string path, AvatarMask mask, Avatar sourceAvatar, StringBuilder report)
     {
         var importer = (ModelImporter)AssetImporter.GetAtPath(path);
         importer.importAnimation = true;
@@ -141,7 +155,7 @@ public static class ShearsAnimationSetup
         report.AppendLine($"{Path.GetFileName(path)}: Generic, clips = {string.Join(", ", clips.Select(c => c.name + (c.loopTime ? " (loop)" : "")))}");
     }
 
-    private static AnimationClip LoadClip(string path)
+    internal static AnimationClip LoadClip(string path)
     {
         return AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>()
             .FirstOrDefault(c => !c.name.StartsWith("__preview__"));

@@ -26,6 +26,14 @@ public class MowerController : MonoBehaviour
     [SerializeField] private bool requireForwardMovement = true;
     [SerializeField] private KeyCode useKey = KeyCode.Mouse0;
 
+    [Header("First Person Animation")]
+    [Tooltip("Arms Animator (FP_Mower.controller); found from a wheel if left empty.")]
+    [SerializeField] private Animator armsAnimator;
+    [SerializeField] private string movingParameter = "Moving";
+
+    /// <summary>Plays the push animation + wheel spin without input (tests / scripted use). Does not cut.</summary>
+    public bool ForceMovingVisual { get; set; }
+
     private float nextCutTime;
 
     public float CutWidth => cutWidth;
@@ -48,10 +56,43 @@ public class MowerController : MonoBehaviour
         {
             inventory = FindFirstObjectByType<GrassInventory>();
         }
+
+        if (armsAnimator == null && wheelFL != null)
+        {
+            armsAnimator = wheelFL.GetComponentInParent<Animator>();
+        }
+    }
+
+    private void OnDisable()
+    {
+        SetMovingVisual(false);
+    }
+
+    private void SetMovingVisual(bool moving)
+    {
+        if (armsAnimator == null || armsAnimator.runtimeAnimatorController == null)
+            return;
+
+        foreach (AnimatorControllerParameter p in armsAnimator.parameters)
+        {
+            if (p.name == movingParameter && p.type == AnimatorControllerParameterType.Bool)
+            {
+                armsAnimator.SetBool(movingParameter, moving);
+                return;
+            }
+        }
     }
 
     private void Update()
     {
+        bool pushing = Input.GetKey(useKey) && (!requireForwardMovement || Input.GetAxisRaw("Vertical") > 0.1f);
+        SetMovingVisual(pushing || ForceMovingVisual);
+
+        if (ForceMovingVisual && !pushing)
+        {
+            SpinWheels();
+        }
+
         bool isUsing = Input.GetKey(useKey);
 
         if (!isUsing)

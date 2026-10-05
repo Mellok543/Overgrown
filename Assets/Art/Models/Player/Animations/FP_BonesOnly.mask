@@ -25,6 +25,8 @@ AvatarMask:
     m_Weight: 0
   - m_Path: Player_Arms_FP/FP_Root
     m_Weight: 1
+  - m_Path: Player_Arms_FP/FP_Root/Tool_Mower
+    m_Weight: 1
   - m_Path: Player_Arms_FP/FP_Root/UpperArm_L
     m_Weight: 1
   - m_Path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
@@ -102,4 +104,8 @@ AvatarMask:
   - m_Path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
     m_Weight: 1
   - m_Path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+    m_Weight: 1
+  - m_Path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Tool_Sickle
+    m_Weight: 1
+  - m_Path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Tool_Trimmer
     m_Weight: 1
