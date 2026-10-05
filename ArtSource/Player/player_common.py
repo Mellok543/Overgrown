@@ -11,6 +11,10 @@ PALETTE = {
     "belt": (98, 70, 46), "buckle": (150, 146, 130),
     "boot": (122, 84, 54), "boot_dark": (92, 62, 40), "sole": (58, 50, 44), "lace": (204, 186, 140),
     "glove": (196, 168, 118), "glove_dark": (160, 132, 90), "glove_palm": (176, 150, 104),
+    # Garden_Shears colours (appended: existing cells keep their place in the atlas)
+    "sh_metal": (150, 154, 158), "sh_metal_edge": (212, 214, 210), "sh_metal_dark": (72, 74, 78),
+    "sh_rust": (142, 84, 44), "sh_rust_dark": (104, 62, 38),
+    "sh_grip": (176, 58, 44), "sh_grip_worn": (150, 84, 62), "sh_grip_black": (40, 40, 42),
 }
 PAL_GRID, PAL_CELL = 8, 128           # 1024 x 1024 atlas
 PAL_SIZE = PAL_GRID * PAL_CELL
@@ -295,9 +299,8 @@ def palette_uvs(ob, mat):
     me.materials.append(mat)
 
 # ---------------------------------------------------------------- FBX export (Y-up, every node rotation 0 / scale 1)
-def export_yup(scene, objs, path, anim=False):
-    """Rotate armature + meshes -90 deg about X and apply (data becomes Y-up), export without axis
-    conversion, then mark the file Y-up. Unity then sees identity transforms and front = +Z."""
+def to_yup(objs):
+    """Rotate armature + meshes -90 deg about X and apply: data becomes Y-up (call once before exporting)."""
     for o in bpy.context.selected_objects:
         o.select_set(False)
     roots = [o for o in objs if o.parent is None]
@@ -308,13 +311,23 @@ def export_yup(scene, objs, path, anim=False):
         o.select_set(True)
     bpy.context.view_layer.objects.active = roots[0]
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+
+def export_yup(scene, objs, path, anim=False, convert=True, all_actions=True):
+    """Export without axis conversion and mark the file Y-up. Unity then sees identity transforms, front = +Z.
+    all_actions=False exports only the active action as one take named after the scene."""
+    if convert:
+        to_yup(objs)
+    for o in bpy.context.selected_objects:
+        o.select_set(False)
+    for o in objs:
+        o.select_set(True)
     bpy.ops.export_scene.fbx(
         filepath=path, use_selection=True, object_types={'ARMATURE', 'MESH'},
         apply_unit_scale=True, apply_scale_options='FBX_SCALE_ALL',
         axis_forward='Y', axis_up='Z', bake_space_transform=False,
         mesh_smooth_type='FACE', use_tspace=False, use_armature_deform_only=True,
         add_leaf_bones=False, primary_bone_axis='Y', secondary_bone_axis='X',
-        bake_anim=anim, bake_anim_use_all_actions=anim, bake_anim_use_nla_strips=False,
+        bake_anim=anim, bake_anim_use_all_actions=anim and all_actions, bake_anim_use_nla_strips=False,
         bake_anim_force_startend_keying=True, bake_anim_simplify_factor=0.0,
         path_mode='RELATIVE', embed_textures=False,
     )

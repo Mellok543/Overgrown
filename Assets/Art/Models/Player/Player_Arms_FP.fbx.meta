@@ -1,0 +1,1226 @@
+fileFormatVersion: 2
+guid: d0260d39ce82bc642bea11dfe4006e1b
+ModelImporter:
+  serializedVersion: 24501
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M_Player
+    second: {fileID: 4846800557404744877, guid: e40ad24eb22bae24586fa61c09fac4ac, type: 3}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+    searchTexturesGlobally: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: FP_GrassCollect
+      takeName: Player_Arms_FP|FP_GrassCollect
+      internalID: -3138052386003183757
+      firstFrame: 0
+      lastFrame: 18
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FP_Idle
+      takeName: Player_Arms_FP|FP_Idle
+      internalID: 2781891678794781489
+      firstFrame: 0
+      lastFrame: 60
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FP_MowerHold
+      takeName: Player_Arms_FP|FP_MowerHold
+      internalID: 7113059033691036543
+      firstFrame: 0
+      lastFrame: 30
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FP_Pickup
+      takeName: Player_Arms_FP|FP_Pickup
+      internalID: -4955501420688078398
+      firstFrame: 0
+      lastFrame: 16
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FP_Shears_Cut
+      takeName: Player_Arms_FP|FP_Shears_Cut
+      internalID: -260104491127232725
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FP_Shears_Idle
+      takeName: Player_Arms_FP|FP_Shears_Idle
+      internalID: -3005848532221302872
+      firstFrame: 0
+      lastFrame: 60
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FP_ShearsUse
+      takeName: Player_Arms_FP|FP_ShearsUse
+      internalID: 7734174385512637602
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FP_SickleHold
+      takeName: Player_Arms_FP|FP_SickleHold
+      internalID: -6668258893807620463
+      firstFrame: 0
+      lastFrame: 30
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: FP_TrimmerHold
+      takeName: Player_Arms_FP|FP_TrimmerHold
+      internalID: -6904687804759614706
+      firstFrame: 0
+      lastFrame: 30
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 0
+      - path: Arm_L
+        weight: 0
+      - path: Arm_R
+        weight: 0
+      - path: Garden_Shears_FP
+        weight: 0
+      - path: Hand_L
+        weight: 0
+      - path: Hand_R
+        weight: 0
+      - path: Player_Arms_FP
+        weight: 0
+      - path: Player_Arms_FP/FP_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Index1_L/Index2_L/Index3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Little1_L/Little2_L/Little3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Middle1_L/Middle2_L/Middle3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Ring1_L/Ring2_L/Ring3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_L/LowerArm_L/Hand_L/Thumb1_L/Thumb2_L/Thumb3_L
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Index1_R/Index2_R/Index3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Little1_R/Little2_R/Little3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Middle1_R/Middle2_R/Middle3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Ring1_R/Ring2_R/Ring3_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_A
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Shears_Root/Shears_B
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R
+        weight: 1
+      - path: Player_Arms_FP/FP_Root/UpperArm_R/LowerArm_R/Hand_R/Thumb1_R/Thumb2_R/Thumb3_R
+        weight: 1
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 28f8211e8460d984f9efe0904f96fb6b, type: 2}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
