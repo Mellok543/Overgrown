@@ -149,12 +149,15 @@ public static class ShearsAnimationSetup
 
     private static void BuildController(AnimationClip idle, AnimationClip cut, StringBuilder report)
     {
-        if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath) != null)
-            AssetDatabase.DeleteAsset(ControllerPath);
-
-        AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath(ControllerPath);
+        // rebuilt in place (never deleted) so Animator references in scenes stay valid
+        AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath)
+                                        ?? AnimatorController.CreateAnimatorControllerAtPath(ControllerPath);
+        foreach (AnimatorControllerParameter p in controller.parameters)
+            controller.RemoveParameter(p);
         controller.AddParameter("Cut", AnimatorControllerParameterType.Trigger);
         AnimatorStateMachine sm = controller.layers[0].stateMachine;
+        foreach (ChildAnimatorState st in sm.states)
+            sm.RemoveState(st.state);
 
         AnimatorState idleState = sm.AddState("ShearsIdle", new Vector3(260, 80, 0));
         idleState.motion = idle;

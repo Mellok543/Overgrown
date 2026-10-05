@@ -113,7 +113,7 @@ PICK_REACH = HP((-0.07, -0.55, -0.36), (0.15, -0.7, -0.75), (-0.7, -0.3, 0.5), c
 #   Shears_B = lower blade + its opposite handle               (held by the LEFT hand)
 # Shears local frame (original model coords, pivot bolt at the origin): +X blades, -X handles, Z = plate normal.
 SH_SCALE = 1.6                          # first-person viewmodel scale (fists need room between the handles)
-SH_OPEN, SH_CLOSED = math.radians(10), math.radians(2.5)
+SH_OPEN, SH_CLOSED = math.radians(19), math.radians(2.5)      # blade opening 38 deg -> 5 deg
 SH_GRIP_T = 0.9                        # where along the handle the fist sits (0 = pivot, 1 = handle end)
 _beta = math.radians(55)                # handles lean 55 deg from vertical; blades point forward, below the crosshair
 SX = Vector((0, -math.sin(_beta), math.cos(_beta)))
@@ -436,13 +436,14 @@ def smooth_track(points, frame):
             return v0 + (v1 - v0) * t
     return points[-1][1]
 o_, c_ = SH_OPEN, SH_CLOSED
-CUT_PHI = [(0, o_), (3, o_ - math.radians(3)), (6, math.radians(2.5)), (8, c_), (9, c_), (11, math.radians(3)),
-           (13, o_ - math.radians(1.5)), (15, o_)]
-CUT_PUSH = [(0, 0.0), (8, 0.006), (9, 0.006), (15, 0.0)]            # tiny squeeze-forward, no swing
+# 0.10 s squeeze starts, ~0.23 s fully closed, hold to 0.30 s, open again 0.35-0.50 s (30 fps)
+CUT_PHI = [(0, o_), (3, o_ - math.radians(2.5)), (6, c_ + math.radians(3)), (7, c_), (9, c_),
+           (10.5, c_ + math.radians(1.5)), (15, o_)]
+CUT_PUSH = [(0, 0.0), (15, 0.0)]                                     # the tool itself stays put
 shears_idle = []
 for f in range(0, 61, 2):
     b = 0.5 - 0.5 * math.cos(math.tau * f / 60)                       # breathing, 2 s cycle
-    shears_idle.append((f, None, None, (o_ + math.radians(0.6) * b, Vector((0, -0.002 * b, -0.006 * b)))))
+    shears_idle.append((f, None, None, (o_ + math.radians(0.6) * b, Vector((0, -0.001 * b, -0.003 * b)))))
 shears_cut = [(f, None, None, (smooth_track(CUT_PHI, f), SX * smooth_track(CUT_PUSH, f))) for f in range(0, 16)]
 clips += [("FP_Shears_Idle", shears_idle), ("FP_Shears_Cut", shears_cut)]
 actions = {name: clip(name, keys) for name, keys in clips}
