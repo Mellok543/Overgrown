@@ -7,11 +7,13 @@ public class ToolInventory : MonoBehaviour
         Hands,
         Sickle,
         Trimmer,
-        Mower
+        Mower,
+        GardenShears
     }
 
     [Header("References")]
     [SerializeField] private HandGrassCollector handGrassCollector;
+    [SerializeField] private PlayerItemInventory playerItems;
 
     [Header("Sickle")]
     [SerializeField] private GameObject sickleObject;
@@ -31,6 +33,7 @@ public class ToolInventory : MonoBehaviour
     [SerializeField] private KeyCode sickleKey = KeyCode.Alpha2;
     [SerializeField] private KeyCode trimmerKey = KeyCode.Alpha3;
     [SerializeField] private KeyCode mowerKey = KeyCode.Alpha4;
+    [SerializeField] private KeyCode gardenShearsKey = KeyCode.Alpha5;
 
     [Header("Start State")]
     [SerializeField] private bool startWithSickle = false;
@@ -53,29 +56,22 @@ public class ToolInventory : MonoBehaviour
     private void Awake()
     {
         if (handGrassCollector == null)
-        {
             handGrassCollector = GetComponent<HandGrassCollector>();
-        }
+
+        if (playerItems == null)
+            playerItems = GetComponent<PlayerItemInventory>();
 
         if (grassCutter == null)
-        {
             grassCutter = GetComponent<GrassCutter>();
-        }
 
         if (sickleSwing == null && sickleObject != null)
-        {
             sickleSwing = sickleObject.GetComponent<SickleSwing>();
-        }
 
         if (trimmerController == null && trimmerObject != null)
-        {
             trimmerController = trimmerObject.GetComponent<TrimmerController>();
-        }
 
         if (mowerController == null && mowerObject != null)
-        {
             mowerController = mowerObject.GetComponent<MowerController>();
-        }
 
         hasSickle = startWithSickle;
         hasTrimmer = startWithTrimmer;
@@ -87,23 +83,22 @@ public class ToolInventory : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(handsKey))
-        {
             SelectHands();
-        }
 
         if (hasSickle && Input.GetKeyDown(sickleKey))
-        {
             SelectSickle();
-        }
 
         if (hasTrimmer && Input.GetKeyDown(trimmerKey))
-        {
             SelectTrimmer();
-        }
 
         if (hasMower && Input.GetKeyDown(mowerKey))
-        {
             SelectMower();
+
+        if (playerItems != null &&
+            playerItems.HasGardenShears &&
+            Input.GetKeyDown(gardenShearsKey))
+        {
+            SelectGardenShears();
         }
     }
 
@@ -115,6 +110,7 @@ public class ToolInventory : MonoBehaviour
             ToolType.Sickle => hasSickle,
             ToolType.Trimmer => hasTrimmer,
             ToolType.Mower => hasMower,
+            ToolType.GardenShears => playerItems != null && playerItems.HasGardenShears,
             _ => false
         };
     }
@@ -126,11 +122,9 @@ public class ToolInventory : MonoBehaviour
             case ToolType.Sickle:
                 hasSickle = true;
                 break;
-
             case ToolType.Trimmer:
                 hasTrimmer = true;
                 break;
-
             case ToolType.Mower:
                 hasMower = true;
                 break;
@@ -179,52 +173,52 @@ public class ToolInventory : MonoBehaviour
         RefreshToolState();
     }
 
+    public void SelectGardenShears()
+    {
+        if (playerItems == null || !playerItems.HasGardenShears)
+            return;
+
+        currentTool = ToolType.GardenShears;
+        RefreshToolState();
+    }
+
     private void RefreshToolState()
     {
         bool handsActive = currentTool == ToolType.Hands;
         bool sickleActive = currentTool == ToolType.Sickle && hasSickle;
         bool trimmerActive = currentTool == ToolType.Trimmer && hasTrimmer;
         bool mowerActive = currentTool == ToolType.Mower && hasMower;
+        bool shearsActive =
+            currentTool == ToolType.GardenShears &&
+            playerItems != null &&
+            playerItems.HasGardenShears;
 
         if (handGrassCollector != null)
-        {
             handGrassCollector.enabled = handsActive;
-        }
 
         if (grassCutter != null)
-        {
             grassCutter.enabled = sickleActive;
-        }
 
         if (sickleSwing != null)
-        {
             sickleSwing.enabled = sickleActive;
-        }
 
         if (sickleObject != null)
-        {
             sickleObject.SetActive(sickleActive);
-        }
 
         if (trimmerController != null)
-        {
             trimmerController.enabled = trimmerActive;
-        }
 
         if (trimmerObject != null)
-        {
             trimmerObject.SetActive(trimmerActive);
-        }
 
         if (mowerController != null)
-        {
             mowerController.enabled = mowerActive;
-        }
 
         if (mowerObject != null)
-        {
             mowerObject.SetActive(mowerActive);
-        }
+
+        if (playerItems != null)
+            playerItems.SetGardenShearsEquipped(shearsActive);
     }
 
     private void OnGUI()
@@ -238,6 +232,7 @@ public class ToolInventory : MonoBehaviour
             ToolType.Sickle => "Серп",
             ToolType.Trimmer => "Триммер",
             ToolType.Mower => "Газонокосилка",
+            ToolType.GardenShears => "Секатор",
             _ => currentTool.ToString()
         };
 
@@ -261,6 +256,12 @@ public class ToolInventory : MonoBehaviour
         if (hasMower)
         {
             GUI.Label(new Rect(20f, y, 300f, 25f), "4 — Газонокосилка");
+            y += 25;
+        }
+
+        if (playerItems != null && playerItems.HasGardenShears)
+        {
+            GUI.Label(new Rect(20f, y, 300f, 25f), "5 — Секатор");
         }
     }
 }
