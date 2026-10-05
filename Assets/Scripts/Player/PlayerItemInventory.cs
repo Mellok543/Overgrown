@@ -8,32 +8,49 @@ public class PlayerItemInventory : MonoBehaviour
     [Header("First Person")]
     [SerializeField] private GameObject gardenShearsObject;
     [SerializeField] private Animator armsAnimator;
+    [SerializeField] private RuntimeAnimatorController normalArmsController;
+    [SerializeField] private RuntimeAnimatorController shearsArmsController;
     [SerializeField] private string shearsCutTrigger = "Cut";
 
+    private bool gardenShearsEquipped;
+    private ToolInventory toolInventory;
+
     public bool HasGardenShears => hasGardenShears;
+    public bool IsGardenShearsEquipped => hasGardenShears && gardenShearsEquipped;
 
     private void Awake()
     {
-        if (armsAnimator == null)
-        {
-            armsAnimator = GetComponentInChildren<Animator>(true);
-        }
+        toolInventory = GetComponent<ToolInventory>();
 
+        if (armsAnimator == null)
+            armsAnimator = GetComponentInChildren<Animator>(true);
+
+        // Claude assigned the shears controller directly to the Animator.
+        // Preserve it as the shears-only controller, then return hands to normal.
+        if (shearsArmsController == null && armsAnimator != null)
+            shearsArmsController = armsAnimator.runtimeAnimatorController;
+
+        gardenShearsEquipped = false;
         RefreshFirstPersonItems();
     }
 
     public void GiveGardenShears()
     {
         hasGardenShears = true;
+        gardenShearsEquipped = false;
+        RefreshFirstPersonItems();
+    }
+
+    public void SetGardenShearsEquipped(bool equipped)
+    {
+        gardenShearsEquipped = hasGardenShears && equipped;
         RefreshFirstPersonItems();
     }
 
     public bool PlayGardenShearsCut()
     {
-        if (!hasGardenShears)
+        if (!IsGardenShearsEquipped)
             return false;
-
-        ShowGardenShears();
 
         if (armsAnimator == null)
             return false;
@@ -43,27 +60,33 @@ public class PlayerItemInventory : MonoBehaviour
         return true;
     }
 
-    public void HideGardenShears()
+    public void ConsumeGardenShears()
     {
-        if (gardenShearsObject != null)
-        {
-            gardenShearsObject.SetActive(false);
-        }
-    }
+        hasGardenShears = false;
+        gardenShearsEquipped = false;
+        RefreshFirstPersonItems();
 
-    public void ShowGardenShears()
-    {
-        if (gardenShearsObject != null && hasGardenShears)
-        {
-            gardenShearsObject.SetActive(true);
-        }
+        if (toolInventory == null)
+            toolInventory = GetComponent<ToolInventory>();
+
+        if (toolInventory != null)
+            toolInventory.SelectHands();
     }
 
     private void RefreshFirstPersonItems()
     {
+        bool showShears = HasGardenShears && gardenShearsEquipped;
+
         if (gardenShearsObject != null)
+            gardenShearsObject.SetActive(showShears);
+
+        if (armsAnimator != null)
         {
-            gardenShearsObject.SetActive(hasGardenShears);
+            RuntimeAnimatorController desiredController =
+                showShears ? shearsArmsController : normalArmsController;
+
+            if (armsAnimator.runtimeAnimatorController != desiredController)
+                armsAnimator.runtimeAnimatorController = desiredController;
         }
     }
 }
