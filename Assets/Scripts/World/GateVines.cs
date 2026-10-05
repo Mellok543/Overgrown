@@ -64,7 +64,7 @@ public class GateVines : MonoBehaviour
         return hit.collider.GetComponentInParent<GateVines>() == this;
     }
 
-    private void TryCutVines()
+    public void TryCutVines()
     {
         if (playerItems == null || !playerItems.HasGardenShears)
             return;
