@@ -32,6 +32,17 @@ public class GrassCutter : MonoBehaviour
 
     public int CutGrass()
     {
+        // Hard guard: grass can only be cut while the sickle cutter itself is active.
+        if (!isActiveAndEnabled)
+            return 0;
+
+        ToolInventory toolInventory = GetComponent<ToolInventory>();
+        if (toolInventory != null &&
+            toolInventory.CurrentTool != ToolInventory.ToolType.Sickle)
+        {
+            return 0;
+        }
+
         if (playerCamera == null || inventory == null || inventory.IsFull)
             return 0;
 
