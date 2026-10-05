@@ -6,6 +6,7 @@ public class GateVines : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private PlayerItemInventory playerItems;
+    [SerializeField] private Transform visualRoot;
 
     [Header("Interaction")]
     [SerializeField] private float interactDistance = 2.5f;
@@ -14,12 +15,22 @@ public class GateVines : MonoBehaviour
     [Header("Cut Timing")]
     [SerializeField] private float cutEffectDelay = 0.25f;
 
+    [Header("Vine Cut Effect")]
+    [SerializeField] private float fallDuration = 0.45f;
+    [SerializeField] private float fallDistance = 0.45f;
+    [SerializeField] private float shrinkTo = 0.15f;
+    [SerializeField] private float fallRotation = 18f;
+
     [Header("Prototype UI")]
     [SerializeField] private bool showPrototypeUI = true;
 
     private bool isLookedAt;
     private bool isCleared;
     private bool isCutting;
+
+    private Vector3 visualStartLocalPosition;
+    private Vector3 visualStartLocalScale;
+    private Quaternion visualStartLocalRotation;
 
     public bool IsCleared => isCleared;
 
@@ -30,6 +41,13 @@ public class GateVines : MonoBehaviour
 
         if (playerItems == null)
             playerItems = FindFirstObjectByType<PlayerItemInventory>();
+
+        if (visualRoot == null)
+            visualRoot = transform;
+
+        visualStartLocalPosition = visualRoot.localPosition;
+        visualStartLocalScale = visualRoot.localScale;
+        visualStartLocalRotation = visualRoot.localRotation;
     }
 
     private void Update()
@@ -76,15 +94,76 @@ public class GateVines : MonoBehaviour
 
         yield return new WaitForSeconds(cutEffectDelay);
 
-        isCleared = true;
-
+        // Stop the vines from blocking the gate as soon as the blades close.
         foreach (Collider col in GetComponentsInChildren<Collider>(true))
             col.enabled = false;
+
+        yield return AnimateCutVines();
+
+        isCleared = true;
 
         foreach (Renderer rend in GetComponentsInChildren<Renderer>(true))
             rend.enabled = false;
 
         isCutting = false;
+    }
+
+    private IEnumerator AnimateCutVines()
+    {
+        if (visualRoot == null || fallDuration <= 0f)
+            yield break;
+
+        Vector3 startPosition = visualRoot.localPosition;
+        Vector3 startScale = visualRoot.localScale;
+        Quaternion startRotation = visualRoot.localRotation;
+
+        Vector3 targetPosition = startPosition + Vector3.down * fallDistance;
+        Vector3 targetScale = startScale * Mathf.Clamp(shrinkTo, 0.01f, 1f);
+        Quaternion targetRotation =
+            startRotation * Quaternion.Euler(fallRotation, 0f, fallRotation * 0.35f);
+
+        float elapsed = 0f;
+
+        while (elapsed < fallDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / fallDuration);
+
+            // Fast initial drop, softer finish.
+            float eased = 1f - Mathf.Pow(1f - t, 3f);
+
+            visualRoot.localPosition = Vector3.Lerp(startPosition, targetPosition, eased);
+            visualRoot.localScale = Vector3.Lerp(startScale, targetScale, eased);
+            visualRoot.localRotation = Quaternion.Slerp(startRotation, targetRotation, eased);
+
+            yield return null;
+        }
+
+        visualRoot.localPosition = targetPosition;
+        visualRoot.localScale = targetScale;
+        visualRoot.localRotation = targetRotation;
+    }
+
+    public void ResetVines()
+    {
+        StopAllCoroutines();
+
+        isLookedAt = false;
+        isCleared = false;
+        isCutting = false;
+
+        if (visualRoot != null)
+        {
+            visualRoot.localPosition = visualStartLocalPosition;
+            visualRoot.localScale = visualStartLocalScale;
+            visualRoot.localRotation = visualStartLocalRotation;
+        }
+
+        foreach (Collider col in GetComponentsInChildren<Collider>(true))
+            col.enabled = true;
+
+        foreach (Renderer rend in GetComponentsInChildren<Renderer>(true))
+            rend.enabled = true;
     }
 
     private void OnGUI()
