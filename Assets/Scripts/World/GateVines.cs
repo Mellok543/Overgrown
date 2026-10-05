@@ -79,7 +79,7 @@ public class GateVines : MonoBehaviour
         if (isCleared || isCutting)
             return;
 
-        if (playerItems == null || !playerItems.HasGardenShears)
+        if (playerItems == null || !playerItems.IsGardenShearsEquipped)
             return;
 
         StartCoroutine(CutVinesRoutine());
@@ -105,6 +105,7 @@ public class GateVines : MonoBehaviour
         foreach (Renderer rend in GetComponentsInChildren<Renderer>(true))
             rend.enabled = false;
 
+        playerItems.ConsumeGardenShears();
         isCutting = false;
     }
 
@@ -171,10 +172,20 @@ public class GateVines : MonoBehaviour
         if (!showPrototypeUI || !isLookedAt || isCleared || isCutting)
             return;
 
-        string text =
-            playerItems != null && playerItems.HasGardenShears
-                ? "Нажми " + interactKey + ", чтобы срезать заросли"
-                : "Нужен секатор, чтобы срезать заросли";
+        string text;
+
+        if (playerItems == null || !playerItems.HasGardenShears)
+        {
+            text = "Нужен секатор, чтобы срезать заросли";
+        }
+        else if (!playerItems.IsGardenShearsEquipped)
+        {
+            text = "Выбери секатор клавишей 5";
+        }
+        else
+        {
+            text = "Нажми " + interactKey + ", чтобы срезать заросли";
+        }
 
         GUI.Label(
             new Rect(Screen.width * 0.5f - 210f, Screen.height - 55f, 420f, 30f),
