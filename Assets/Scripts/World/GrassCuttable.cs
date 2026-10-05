@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class GrassCuttable : MonoBehaviour
@@ -7,6 +8,13 @@ public class GrassCuttable : MonoBehaviour
     [SerializeField] private GameObject[] fullGrassVariants;
     [SerializeField] private GameObject cutGrass;
     [SerializeField] private bool chooseRandomVariant = true;
+
+    [Header("Cut Animation")]
+    [SerializeField] private float cutDisappearDuration = 0.22f;
+    [SerializeField, Range(0.01f, 1f)] private float cutShrinkY = 0.08f;
+    [SerializeField, Range(0.2f, 1f)] private float cutShrinkXZ = 0.75f;
+    [SerializeField] private float cutDropDistance = 0.12f;
+    [SerializeField] private float cutTiltAngle = 10f;
 
     [Header("Highlight")]
     [SerializeField] private bool useScaleHighlight = true;
@@ -18,6 +26,7 @@ public class GrassCuttable : MonoBehaviour
     private bool isCut;
     private int activeVariantIndex;
     private bool isHighlighted;
+    private Coroutine cutAnimation;
 
     private GameObject highlightedVisual;
     private Vector3 originalRootScale;
@@ -50,6 +59,12 @@ public class GrassCuttable : MonoBehaviour
     {
         ClearHighlight();
 
+        if (cutAnimation != null)
+        {
+            StopCoroutine(cutAnimation);
+            cutAnimation = null;
+        }
+
         if (fullGrassVariants == null || fullGrassVariants.Length == 0)
         {
             Debug.LogWarning("GrassCuttable on " + name + " has no full grass variants assigned.", this);
@@ -62,10 +77,11 @@ public class GrassCuttable : MonoBehaviour
 
         for (int i = 0; i < fullGrassVariants.Length; i++)
         {
-            if (fullGrassVariants[i] != null)
-            {
-                fullGrassVariants[i].SetActive(i == activeVariantIndex);
-            }
+            if (fullGrassVariants[i] == null)
+                continue;
+
+            RestoreVisualTransform(fullGrassVariants[i]);
+            fullGrassVariants[i].SetActive(i == activeVariantIndex);
         }
 
         if (cutGrass != null)
@@ -84,13 +100,9 @@ public class GrassCuttable : MonoBehaviour
     public void SetHighlighted(bool highlighted)
     {
         if (highlighted)
-        {
             ApplyHighlight();
-        }
         else
-        {
             ClearHighlight();
-        }
     }
 
     private void ApplyHighlight()
@@ -99,7 +111,6 @@ public class GrassCuttable : MonoBehaviour
             return;
 
         GameObject activeVisual = GetActiveVisual();
-
         if (activeVisual == null)
             return;
 
@@ -107,9 +118,7 @@ public class GrassCuttable : MonoBehaviour
         highlightedVisual = activeVisual;
 
         if (useScaleHighlight)
-        {
             transform.localScale = originalRootScale * highlightScaleMultiplier;
-        }
 
         transform.localPosition =
             originalRootLocalPosition + Vector3.up * highlightLift;
@@ -120,16 +129,12 @@ public class GrassCuttable : MonoBehaviour
     private void ClearHighlight()
     {
         if (useScaleHighlight)
-        {
             transform.localScale = originalRootScale;
-        }
 
         transform.localPosition = originalRootLocalPosition;
 
         if (highlightedVisual != null)
-        {
             ApplyMaterialHighlight(highlightedVisual, false);
-        }
 
         highlightedVisual = null;
         isHighlighted = false;
@@ -141,9 +146,7 @@ public class GrassCuttable : MonoBehaviour
             return;
 
         if (propertyBlock == null)
-        {
             propertyBlock = new MaterialPropertyBlock();
-        }
 
         Renderer[] renderers = visual.GetComponentsInChildren<Renderer>(true);
 
@@ -157,7 +160,6 @@ public class GrassCuttable : MonoBehaviour
             if (highlighted)
             {
                 Color glow = highlightColor * highlightIntensity;
-
                 propertyBlock.SetColor(BaseColorId, highlightColor);
                 propertyBlock.SetColor(LegacyColorId, highlightColor);
                 propertyBlock.SetColor(EmissionColorId, glow);
@@ -174,9 +176,7 @@ public class GrassCuttable : MonoBehaviour
     private GameObject GetActiveVisual()
     {
         if (isCut)
-        {
             return cutGrass;
-        }
 
         if (fullGrassVariants == null ||
             activeVariantIndex < 0 ||
@@ -193,27 +193,97 @@ public class GrassCuttable : MonoBehaviour
         if (isCut)
             return false;
 
+        GameObject activeVisual =
+            fullGrassVariants != null &&
+            activeVariantIndex >= 0 &&
+            activeVariantIndex < fullGrassVariants.Length
+                ? fullGrassVariants[activeVariantIndex]
+                : null;
+
         ClearHighlight();
         isCut = true;
 
+        CutStateChanged?.Invoke(this, true);
+
+        if (activeVisual != null && activeVisual.activeSelf)
+        {
+            cutAnimation = StartCoroutine(AnimateCut(activeVisual));
+        }
+        else
+        {
+            FinishCutVisuals();
+        }
+
+        return true;
+    }
+
+    private IEnumerator AnimateCut(GameObject visual)
+    {
+        Transform t = visual.transform;
+
+        Vector3 startPosition = t.localPosition;
+        Vector3 startScale = t.localScale;
+        Quaternion startRotation = t.localRotation;
+
+        Vector3 targetPosition = startPosition + Vector3.down * cutDropDistance;
+        Vector3 targetScale = new Vector3(
+            startScale.x * cutShrinkXZ,
+            startScale.y * cutShrinkY,
+            startScale.z * cutShrinkXZ
+        );
+        Quaternion targetRotation =
+            startRotation * Quaternion.Euler(cutTiltAngle, 0f, -cutTiltAngle * 0.45f);
+
+        float duration = Mathf.Max(0.01f, cutDisappearDuration);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t01 = Mathf.Clamp01(elapsed / duration);
+            float eased = 1f - Mathf.Pow(1f - t01, 3f);
+
+            t.localPosition = Vector3.Lerp(startPosition, targetPosition, eased);
+            t.localScale = Vector3.Lerp(startScale, targetScale, eased);
+            t.localRotation = Quaternion.Slerp(startRotation, targetRotation, eased);
+
+            yield return null;
+        }
+
+        FinishCutVisuals();
+        cutAnimation = null;
+    }
+
+    private void FinishCutVisuals()
+    {
         if (fullGrassVariants != null)
         {
             foreach (GameObject variant in fullGrassVariants)
             {
                 if (variant != null)
-                {
                     variant.SetActive(false);
-                }
             }
         }
 
         if (cutGrass != null)
-        {
             cutGrass.SetActive(true);
-        }
+    }
 
-        CutStateChanged?.Invoke(this, true);
-        return true;
+    private void RestoreVisualTransform(GameObject visual)
+    {
+        if (visual == null)
+            return;
+
+        // Grass variants are authored around the same prefab origin.
+        // Reset only runtime animation changes.
+        Transform t = visual.transform;
+
+        if (t.localScale.x <= 0.0001f ||
+            t.localScale.y <= 0.0001f ||
+            t.localScale.z <= 0.0001f)
+        {
+            t.localScale = Vector3.one;
+        }
     }
 
     public void ResetGrass()
