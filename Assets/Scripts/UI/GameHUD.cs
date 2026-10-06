@@ -9,13 +9,33 @@ public class GameHUD : MonoBehaviour
     [SerializeField] private ToolInventory toolInventory;
     [SerializeField] private StartZoneProgress zoneProgress;
 
-    [Header("HUD")]
+    [Header("Main HUD")]
     [SerializeField] private Text moneyText;
     [SerializeField] private Text grassText;
     [SerializeField] private Text toolText;
     [SerializeField] private Text zoneText;
+    [SerializeField] private Text objectiveText;
     [SerializeField] private Image grassFill;
     [SerializeField] private Image zoneFill;
+
+    [Header("Tool Belt")]
+    [SerializeField] private Image[] toolSlots;
+    [SerializeField] private Text[] toolSlotLabels;
+
+    private static readonly Color SlotIdle =
+        new Color(0.10f, 0.12f, 0.09f, 0.88f);
+
+    private static readonly Color SlotLocked =
+        new Color(0.055f, 0.06f, 0.05f, 0.56f);
+
+    private static readonly Color SlotActive =
+        new Color(0.48f, 0.58f, 0.22f, 0.96f);
+
+    private static readonly Color TextNormal =
+        new Color(0.92f, 0.90f, 0.80f, 1f);
+
+    private static readonly Color TextLocked =
+        new Color(0.38f, 0.40f, 0.34f, 1f);
 
     private void Awake()
     {
@@ -90,28 +110,54 @@ public class GameHUD : MonoBehaviour
         int capacity = grassInventory != null ? grassInventory.Capacity : 1;
 
         if (grassText != null)
-            grassText.text = "Трава  " + bundles + " / " + capacity;
+            grassText.text = bundles + " / " + capacity;
 
         if (grassFill != null)
-            grassFill.fillAmount = capacity > 0 ? Mathf.Clamp01((float)bundles / capacity) : 0f;
+            grassFill.fillAmount =
+                capacity > 0 ? Mathf.Clamp01((float)bundles / capacity) : 0f;
     }
 
     private void RefreshTool()
     {
-        if (toolText == null || toolInventory == null)
+        if (toolInventory == null)
             return;
 
-        string value = toolInventory.CurrentTool switch
+        string value = GetToolName(toolInventory.CurrentTool);
+
+        if (toolText != null)
+            toolText.text = value;
+
+        if (toolSlots == null || toolSlotLabels == null)
+            return;
+
+        ToolInventory.ToolType[] order =
         {
-            ToolInventory.ToolType.Hands => "1  Руки",
-            ToolInventory.ToolType.Sickle => "2  Серп",
-            ToolInventory.ToolType.Trimmer => "3  Триммер",
-            ToolInventory.ToolType.Mower => "4  Газонокосилка",
-            ToolInventory.ToolType.GardenShears => "5  Секатор",
-            _ => toolInventory.CurrentTool.ToString()
+            ToolInventory.ToolType.Hands,
+            ToolInventory.ToolType.Sickle,
+            ToolInventory.ToolType.Trimmer,
+            ToolInventory.ToolType.Mower,
+            ToolInventory.ToolType.GardenShears
         };
 
-        toolText.text = value;
+        for (int i = 0; i < order.Length; i++)
+        {
+            if (i >= toolSlots.Length || i >= toolSlotLabels.Length)
+                break;
+
+            bool unlocked = toolInventory.IsToolUnlocked(order[i]);
+            bool active = toolInventory.CurrentTool == order[i];
+
+            if (toolSlots[i] != null)
+                toolSlots[i].color =
+                    active ? SlotActive : unlocked ? SlotIdle : SlotLocked;
+
+            if (toolSlotLabels[i] != null)
+            {
+                toolSlotLabels[i].color = unlocked ? TextNormal : TextLocked;
+                toolSlotLabels[i].text =
+                    (i + 1) + "\n" + (unlocked ? GetShortToolName(order[i]) : "—");
+            }
+        }
     }
 
     private void RefreshZone()
@@ -121,17 +167,50 @@ public class GameHUD : MonoBehaviour
 
         if (zoneProgress.Completed)
         {
-            zoneText.text = "Двор очищен";
+            zoneText.text = "100%";
+            if (objectiveText != null)
+                objectiveText.text = "ДВОР ОЧИЩЕН";
+
             if (zoneFill != null)
                 zoneFill.fillAmount = 1f;
+
             return;
         }
 
         float progress = Mathf.Clamp01(zoneProgress.Progress);
 
-        zoneText.text = "Двор  " + Mathf.RoundToInt(progress * 100f) + "%";
+        zoneText.text = Mathf.RoundToInt(progress * 100f) + "%";
+
+        if (objectiveText != null)
+            objectiveText.text = "ОЧИСТИТЕ ДВОР";
 
         if (zoneFill != null)
             zoneFill.fillAmount = progress;
+    }
+
+    private static string GetToolName(ToolInventory.ToolType tool)
+    {
+        return tool switch
+        {
+            ToolInventory.ToolType.Hands => "РУКИ",
+            ToolInventory.ToolType.Sickle => "СЕРП",
+            ToolInventory.ToolType.Trimmer => "ТРИММЕР",
+            ToolInventory.ToolType.Mower => "ГАЗОНОКОСИЛКА",
+            ToolInventory.ToolType.GardenShears => "СЕКАТОР",
+            _ => tool.ToString().ToUpperInvariant()
+        };
+    }
+
+    private static string GetShortToolName(ToolInventory.ToolType tool)
+    {
+        return tool switch
+        {
+            ToolInventory.ToolType.Hands => "РУКИ",
+            ToolInventory.ToolType.Sickle => "СЕРП",
+            ToolInventory.ToolType.Trimmer => "ТРИМ",
+            ToolInventory.ToolType.Mower => "КОСИЛ",
+            ToolInventory.ToolType.GardenShears => "СЕКАТ",
+            _ => "?"
+        };
     }
 }
