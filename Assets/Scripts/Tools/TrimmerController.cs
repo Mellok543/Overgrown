@@ -15,6 +15,12 @@ public class TrimmerController : MonoBehaviour
     [SerializeField] private float cutsPerSecond = 5f;
     [SerializeField] private int bundlesPerTick = 2;
 
+    [Header("Tool Identity")]
+    [Tooltip("Trimmer stays precise: smaller working circle than the old prototype.")]
+    [SerializeField, Range(0.4f, 1f)] private float effectiveRadiusMultiplier = 0.7f;
+    [Tooltip("Maximum separate grass clumps cut by one trimmer tick.")]
+    [SerializeField, Range(1, 4)] private int maxClumpsPerTick = 1;
+
     [Header("Visual")]
     [SerializeField] private float headSpinSpeed = 1200f;
     [Tooltip("Arms Animator (FP_Trimmer.controller); found from the trimmer head if left empty.")]
@@ -113,9 +119,11 @@ public class TrimmerController : MonoBehaviour
             playerCamera.transform.position +
             playerCamera.transform.forward * cutDistance;
 
+        float effectiveRadius = cutRadius * effectiveRadiusMultiplier;
+
         Collider[] hits = Physics.OverlapSphere(
             cutPosition,
-            cutRadius,
+            effectiveRadius,
             grassLayer,
             QueryTriggerInteraction.Collide
         );
@@ -142,7 +150,10 @@ public class TrimmerController : MonoBehaviour
         });
 
         int freeSpace = inventory.Capacity - inventory.Bundles;
-        int maxCollect = Mathf.Min(bundlesPerTick, freeSpace);
+        int maxCollect = Mathf.Min(
+            Mathf.Min(bundlesPerTick, maxClumpsPerTick),
+            freeSpace
+        );
         int collected = 0;
 
         foreach (GrassCuttable grass in grassObjects)
