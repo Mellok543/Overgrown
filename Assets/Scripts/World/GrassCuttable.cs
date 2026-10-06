@@ -8,6 +8,7 @@ public class GrassCuttable : MonoBehaviour
     [SerializeField] private GameObject[] fullGrassVariants;
     [SerializeField] private GameObject cutGrass;
     [SerializeField] private bool chooseRandomVariant = true;
+    [SerializeField] private bool showCutRemnant = false;
 
     [Header("Cut Animation")]
     [SerializeField] private float cutDisappearDuration = 0.22f;
@@ -266,7 +267,7 @@ public class GrassCuttable : MonoBehaviour
         }
 
         if (cutGrass != null)
-            cutGrass.SetActive(true);
+            cutGrass.SetActive(showCutRemnant);
     }
 
     private void RestoreVisualTransform(GameObject visual)
