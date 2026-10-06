@@ -28,40 +28,55 @@ public static class GameHUDSetup
         root.AddComponent<GraphicRaycaster>();
         GameHUD hud = root.AddComponent<GameHUD>();
 
-        Color panel = new Color(0.055f, 0.065f, 0.05f, 0.82f);
-        Color panelSoft = new Color(0.055f, 0.065f, 0.05f, 0.68f);
-        Color text = new Color(0.96f, 0.94f, 0.84f, 1f);
-        Color muted = new Color(0.73f, 0.76f, 0.64f, 1f);
-        Color accent = new Color(0.66f, 0.76f, 0.34f, 1f);
-        Color track = new Color(0.18f, 0.20f, 0.15f, 0.92f);
+        Color panel = new Color(0.045f, 0.055f, 0.04f, 0.90f);
+        Color panelSoft = new Color(0.055f, 0.065f, 0.05f, 0.82f);
+        Color panelLight = new Color(0.10f, 0.12f, 0.09f, 0.90f);
+        Color text = new Color(0.95f, 0.93f, 0.83f, 1f);
+        Color muted = new Color(0.66f, 0.69f, 0.58f, 1f);
+        Color accent = new Color(0.62f, 0.74f, 0.30f, 1f);
+        Color track = new Color(0.14f, 0.16f, 0.12f, 1f);
 
-        // ---------- top left: money + carried grass ----------
-        GameObject statusCard = CreatePanel(
+        // -------- Status card --------
+        GameObject status = CreatePanel(
             root.transform, "Status",
-            new Vector2(28f, -28f), new Vector2(300f, 112f),
+            new Vector2(30f, -30f), new Vector2(330f, 126f),
             new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f),
             panel
         );
+        AddShadow(status, new Color(0f, 0f, 0f, 0.32f), new Vector2(4f, -4f));
 
-        Text moneyText = CreateText(
-            statusCard.transform, "Money", "$ 0",
-            font, 28, text, TextAnchor.MiddleLeft
-        );
+        Image statusAccent = CreateImage(status.transform, "Accent", accent);
+        SetAnchoredRect(statusAccent.rectTransform,
+            new Vector2(0f, 0f), new Vector2(6f, 126f),
+            new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f));
+
+        Text moneyCaption = CreateText(status.transform, "MoneyCaption", "ДЕНЬГИ",
+            font, 14, muted, TextAnchor.UpperLeft);
+        SetAnchoredRect(moneyCaption.rectTransform,
+            new Vector2(22f, -16f), new Vector2(120f, 22f),
+            new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f));
+
+        Text moneyText = CreateText(status.transform, "Money", "$ 0",
+            font, 30, text, TextAnchor.UpperLeft);
         SetAnchoredRect(moneyText.rectTransform,
-            new Vector2(18f, -12f), new Vector2(264f, 34f),
+            new Vector2(22f, -38f), new Vector2(180f, 36f),
             new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f));
 
-        Text grassText = CreateText(
-            statusCard.transform, "Grass", "Трава  0 / 5",
-            font, 21, muted, TextAnchor.MiddleLeft
-        );
+        Text grassCaption = CreateText(status.transform, "GrassCaption", "СОБРАНО ТРАВЫ",
+            font, 14, muted, TextAnchor.UpperRight);
+        SetAnchoredRect(grassCaption.rectTransform,
+            new Vector2(-20f, -16f), new Vector2(145f, 22f),
+            new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f));
+
+        Text grassText = CreateText(status.transform, "Grass", "0 / 5",
+            font, 26, text, TextAnchor.UpperRight);
         SetAnchoredRect(grassText.rectTransform,
-            new Vector2(18f, -52f), new Vector2(264f, 26f),
-            new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f));
+            new Vector2(-20f, -40f), new Vector2(145f, 32f),
+            new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f));
 
-        Image grassTrack = CreateImage(statusCard.transform, "GrassTrack", track);
+        Image grassTrack = CreateImage(status.transform, "GrassTrack", track);
         SetAnchoredRect(grassTrack.rectTransform,
-            new Vector2(18f, 14f), new Vector2(264f, 8f),
+            new Vector2(22f, 16f), new Vector2(286f, 9f),
             new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f));
 
         Image grassFill = CreateImage(grassTrack.transform, "Fill", accent);
@@ -71,26 +86,31 @@ public static class GameHUDSetup
         grassFill.fillAmount = 0f;
         SetStretch(grassFill.rectTransform);
 
-        // ---------- top center: zone progress ----------
-        GameObject zoneCard = CreatePanel(
-            root.transform, "ZoneProgress",
-            new Vector2(0f, -28f), new Vector2(340f, 62f),
+        // -------- Objective card --------
+        GameObject objective = CreatePanel(
+            root.transform, "Objective",
+            new Vector2(0f, -30f), new Vector2(430f, 92f),
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
             panelSoft
         );
+        AddShadow(objective, new Color(0f, 0f, 0f, 0.26f), new Vector2(3f, -3f));
 
-        Text zoneText = CreateText(
-            zoneCard.transform, "Label", "Двор  0%",
-            font, 22, text, TextAnchor.MiddleCenter
-        );
+        Text objectiveText = CreateText(objective.transform, "ObjectiveText", "ОЧИСТИТЕ ДВОР",
+            font, 18, muted, TextAnchor.MiddleLeft);
+        SetAnchoredRect(objectiveText.rectTransform,
+            new Vector2(20f, -10f), new Vector2(260f, 28f),
+            new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f));
+
+        Text zoneText = CreateText(objective.transform, "Percent", "0%",
+            font, 27, text, TextAnchor.MiddleRight);
         SetAnchoredRect(zoneText.rectTransform,
-            new Vector2(0f, -7f), new Vector2(310f, 34f),
-            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f));
+            new Vector2(-18f, -8f), new Vector2(90f, 32f),
+            new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f));
 
-        Image zoneTrack = CreateImage(zoneCard.transform, "Track", track);
+        Image zoneTrack = CreateImage(objective.transform, "Track", track);
         SetAnchoredRect(zoneTrack.rectTransform,
-            new Vector2(0f, 10f), new Vector2(310f, 7f),
-            new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f));
+            new Vector2(20f, 16f), new Vector2(392f, 10f),
+            new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f));
 
         Image zoneFill = CreateImage(zoneTrack.transform, "Fill", accent);
         zoneFill.type = Image.Type.Filled;
@@ -99,31 +119,70 @@ public static class GameHUDSetup
         zoneFill.fillAmount = 0f;
         SetStretch(zoneFill.rectTransform);
 
-        // ---------- bottom center: selected tool ----------
-        GameObject toolCard = CreatePanel(
-            root.transform, "CurrentTool",
-            new Vector2(0f, 26f), new Vector2(300f, 52f),
+        // -------- Tool belt --------
+        GameObject belt = CreatePanel(
+            root.transform, "ToolBelt",
+            new Vector2(0f, 28f), new Vector2(560f, 112f),
             new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            panelSoft
+            new Color(panel.r, panel.g, panel.b, 0.72f)
         );
+        AddShadow(belt, new Color(0f, 0f, 0f, 0.25f), new Vector2(3f, -3f));
 
-        Text toolText = CreateText(
-            toolCard.transform, "Label", "1  Руки",
-            font, 22, text, TextAnchor.MiddleCenter
-        );
-        SetStretch(toolText.rectTransform);
-        toolText.rectTransform.offsetMin = new Vector2(12f, 4f);
-        toolText.rectTransform.offsetMax = new Vector2(-12f, -4f);
+        Text toolText = CreateText(belt.transform, "CurrentTool", "РУКИ",
+            font, 16, muted, TextAnchor.MiddleCenter);
+        SetAnchoredRect(toolText.rectTransform,
+            new Vector2(0f, -10f), new Vector2(520f, 24f),
+            new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f));
 
-        CreateCrosshair(root.transform, new Color(1f, 1f, 1f, 0.9f));
+        Image[] slots = new Image[5];
+        Text[] slotLabels = new Text[5];
+
+        float startX = -208f;
+        for (int i = 0; i < 5; i++)
+        {
+            GameObject slot = CreatePanel(
+                belt.transform, "Slot_" + (i + 1),
+                new Vector2(startX + i * 104f, 14f), new Vector2(88f, 64f),
+                new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+                panelLight
+            );
+
+            slots[i] = slot.GetComponent<Image>();
+
+            Outline outline = slot.AddComponent<Outline>();
+            outline.effectColor = new Color(accent.r, accent.g, accent.b, 0.28f);
+            outline.effectDistance = new Vector2(1f, -1f);
+
+            Text label = CreateText(slot.transform, "Label",
+                (i + 1) + "\n—",
+                font, 15, text, TextAnchor.MiddleCenter);
+            SetStretch(label.rectTransform);
+            slotLabels[i] = label;
+        }
+
+        CreateCrosshair(root.transform, new Color(1f, 1f, 1f, 0.92f));
 
         SerializedObject so = new SerializedObject(hud);
         so.FindProperty("moneyText").objectReferenceValue = moneyText;
         so.FindProperty("grassText").objectReferenceValue = grassText;
         so.FindProperty("toolText").objectReferenceValue = toolText;
         so.FindProperty("zoneText").objectReferenceValue = zoneText;
+        so.FindProperty("objectiveText").objectReferenceValue = objectiveText;
         so.FindProperty("grassFill").objectReferenceValue = grassFill;
         so.FindProperty("zoneFill").objectReferenceValue = zoneFill;
+
+        SerializedProperty slotProp = so.FindProperty("toolSlots");
+        slotProp.arraySize = slots.Length;
+
+        SerializedProperty labelProp = so.FindProperty("toolSlotLabels");
+        labelProp.arraySize = slotLabels.Length;
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slotProp.GetArrayElementAtIndex(i).objectReferenceValue = slots[i];
+            labelProp.GetArrayElementAtIndex(i).objectReferenceValue = slotLabels[i];
+        }
+
         so.ApplyModifiedPropertiesWithoutUndo();
 
         DisablePrototypeUI<EconomyManager>("showPrototypeUI");
@@ -139,7 +198,7 @@ public static class GameHUDSetup
         );
 
         Selection.activeGameObject = root;
-        Debug.Log("[GameHUDSetup] Clean HUD created. Save the scene (Ctrl+S).");
+        Debug.Log("[GameHUDSetup] Styled HUD created. Save the scene (Ctrl+S).");
     }
 
     private static GameObject CreatePanel(
@@ -167,6 +226,14 @@ public static class GameHUDSetup
         image.raycastTarget = false;
 
         return go;
+    }
+
+    private static void AddShadow(GameObject target, Color color, Vector2 distance)
+    {
+        Shadow shadow = target.AddComponent<Shadow>();
+        shadow.effectColor = color;
+        shadow.effectDistance = distance;
+        shadow.useGraphicAlpha = true;
     }
 
     private static Text CreateText(
@@ -215,10 +282,10 @@ public static class GameHUDSetup
         root.anchorMin = new Vector2(0.5f, 0.5f);
         root.anchorMax = new Vector2(0.5f, 0.5f);
         root.pivot = new Vector2(0.5f, 0.5f);
-        root.sizeDelta = new Vector2(24f, 24f);
+        root.sizeDelta = new Vector2(22f, 22f);
         root.anchoredPosition = Vector2.zero;
 
-        float length = 6f;
+        float length = 5f;
         float gap = 4f;
         float thickness = 2f;
 
