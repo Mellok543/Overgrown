@@ -22,6 +22,14 @@ public class MowerController : MonoBehaviour
     [SerializeField] private float cutsPerSecond = 6f;
     [SerializeField] private int bundlesPerTick = 4;
 
+    [Header("Tool Identity")]
+    [Tooltip("Mower clears a noticeably wider lane than the prototype.")]
+    [SerializeField, Range(1f, 2f)] private float effectiveWidthMultiplier = 1.5f;
+    [Tooltip("Mower also reaches farther along the ground each cutting tick.")]
+    [SerializeField, Range(1f, 2f)] private float effectiveDepthMultiplier = 1.25f;
+    [Tooltip("Minimum number of separate grass clumps the mower can clear per tick when capacity allows.")]
+    [SerializeField, Range(4, 12)] private int mowerClumpsPerTick = 8;
+
     [Header("Control")]
     [SerializeField] private bool requireForwardMovement = true;
     [SerializeField] private KeyCode useKey = KeyCode.Mouse0;
@@ -148,10 +156,13 @@ public class MowerController : MonoBehaviour
             Vector3.up
         );
 
+        float effectiveWidth = cutWidth * effectiveWidthMultiplier;
+        float effectiveDepth = cutDepth * effectiveDepthMultiplier;
+
         Vector3 halfExtents = new Vector3(
-            cutWidth * 0.5f,
+            effectiveWidth * 0.5f,
             0.75f,
-            cutDepth * 0.5f
+            effectiveDepth * 0.5f
         );
 
         Collider[] hits = Physics.OverlapBox(
@@ -184,7 +195,10 @@ public class MowerController : MonoBehaviour
         });
 
         int freeSpace = inventory.Capacity - inventory.Bundles;
-        int maxCollect = Mathf.Min(bundlesPerTick, freeSpace);
+        int maxCollect = Mathf.Min(
+            Mathf.Max(bundlesPerTick, mowerClumpsPerTick),
+            freeSpace
+        );
         int collected = 0;
 
         foreach (GrassCuttable grass in grassObjects)
